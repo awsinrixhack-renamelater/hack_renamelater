@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import './App.css'
 import Homepage from './pages/Homepage.tsx'
 import Scoreboard from './pages/Scoreboard.tsx'
-import SignIn from './pages/SignIn'
+import SignIn from './pages/Signin.tsx'
 
 function App() {
   const [count, setCount] = useState(0)

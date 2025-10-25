@@ -38,8 +38,8 @@ export default function Homepage() {
   /** Tracks if we're waiting for an API response */
   const [isLoading, setIsLoading] = useState(false);
   
-  /** User email from localStorage */
-  const [userEmail, setUserEmail] = useState("");
+  /** Username from localStorage */
+  const [username, setUsername] = useState("");
   
   // ==================== AUTHENTICATION CHECK ====================
   
@@ -49,14 +49,14 @@ export default function Homepage() {
    */
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
-    const email = localStorage.getItem('userEmail');
+    const user = localStorage.getItem('username');
     
     if (!authToken) {
       // No authentication, redirect to signin
       navigate('/signin');
     } else {
-      // Set user email for display
-      setUserEmail(email || 'User');
+      // Set username for display
+      setUsername(user || 'User');
     }
   }, [navigate]);
   
@@ -184,7 +184,7 @@ export default function Homepage() {
   const handleLogout = () => {
     // Clear authentication
     localStorage.removeItem('authToken');
-    localStorage.removeItem('userEmail');
+    localStorage.removeItem('username');
     
     // Redirect to signin
     navigate('/signin');
@@ -574,17 +574,7 @@ export default function Homepage() {
       )}
 
       {/* ==================== ANIMATIONS ==================== */}
-      <style>{`
-        /* Sidebar slide-in animation */
-        @keyframes slideIn {
-          from {
-            transform: translateX(100%);
-          }
-          to {
-            transform: translateX(0);
-          }
-        }
-      `}</style>
+     
     </div>
   );
 }
