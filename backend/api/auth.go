@@ -2,7 +2,6 @@ package main
 
 import (
 	"crypto/sha256"
-	"database/sql"
 	"encoding/hex"
 	"log"
 	"net/http"
@@ -10,9 +9,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type App struct {
-	DB *sql.DB
-}
 
 func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -24,7 +20,7 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 	hashed := hex.EncodeToString(h.Sum(nil))
 
 	ctx := r.Context()
-	_, err := a.DB.ExecContext(ctx, "INSERT INTO users (id, password_hash) VALUES (?, ?)", id, hashed)
+	_, err := a.DB.ExecContext(ctx, "INSERT QUERY GOES HERE", id, hashed)
 	if err != nil {
 		log.Printf("signup exec error: %v", err)
 		http.Error(w, "failed to create user", http.StatusInternalServerError)
