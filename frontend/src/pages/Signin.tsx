@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 /**
  * SignIn Component - User authentication page
  * Features: Login, Sign up toggle, Remember me, Forgot password
- * Test Account: test@example.com / password123
+ * Test Account: testuser / password123
  */
 export default function SignIn() {
   // ==================== ROUTER ====================
@@ -14,7 +14,7 @@ export default function SignIn() {
   
   // ==================== STATE MANAGEMENT ====================
   
-  /** Username/email input value */
+  /** Username input value */
   const [username, setUsername] = useState("");
   
   /** Password input value */
@@ -55,16 +55,6 @@ export default function SignIn() {
   // ==================== VALIDATION ====================
   
   /**
-   * Validates email format
-   * @param email - Email string to validate
-   * @returns boolean - true if valid email format
-   */
-  const isValidEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  /**
    * Validates password strength
    * @param pass - Password to validate
    * @returns boolean - true if password meets requirements
@@ -79,7 +69,7 @@ export default function SignIn() {
   /**
    * Handles form submission for both login and sign up
    * TEST CREDENTIALS:
-   * Email: test@example.com
+   * Username: testuser
    * Password: password123
    */
   const handleSubmit = async () => {
@@ -88,11 +78,6 @@ export default function SignIn() {
     // Validation
     if (!username || !password) {
       setError("Please fill in all fields");
-      return;
-    }
-
-    if (!isValidEmail(username)) {
-      setError("Please enter a valid email address");
       return;
     }
 
@@ -115,7 +100,7 @@ export default function SignIn() {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify({
-      //     email: username,
+      //     username: username,
       //     password: password,
       //     rememberMe: rememberMe
       //   })
@@ -129,12 +114,12 @@ export default function SignIn() {
       // TEMPORARY: Test authentication (FOR DEVELOPMENT ONLY)
       setTimeout(() => {
         // Test credentials check
-        if (username === "test@example.com" && password === "password123") {
+        if (username === "testuser" && password === "password123") {
           console.log('✅ Login successful!');
           
           // Store auth token (simulated)
           localStorage.setItem('authToken', 'test-token-12345');
-          localStorage.setItem('userEmail', username);
+          localStorage.setItem('username', username);
           
           // Redirect to homepage
           navigate('/home');
@@ -142,11 +127,11 @@ export default function SignIn() {
           // Allow any sign up for testing
           console.log('✅ Sign up successful!');
           localStorage.setItem('authToken', 'new-user-token');
-          localStorage.setItem('userEmail', username);
+          localStorage.setItem('username', username);
           navigate('/home');
         } else {
           // Invalid credentials
-          setError("Invalid email or password. Try: test@example.com / password123");
+          setError("Invalid username or password. Try: testuser / password123");
           setIsLoading(false);
         }
       }, 1000);
@@ -163,12 +148,7 @@ export default function SignIn() {
    */
   const handleForgotPassword = async () => {
     if (!username) {
-      setError("Please enter your email first");
-      return;
-    }
-
-    if (!isValidEmail(username)) {
-      setError("Please enter a valid email address");
+      setError("Please enter your username first");
       return;
     }
 
@@ -177,10 +157,10 @@ export default function SignIn() {
       // const response = await fetch('/api/forgot-password', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email: username })
+      //   body: JSON.stringify({ username: username })
       // });
       
-      alert(`Password reset link sent to ${username}`);
+      alert(`Password reset link sent for username: ${username}`);
       
     } catch (err) {
       setError("Failed to send reset link");
@@ -253,7 +233,7 @@ export default function SignIn() {
             color: "#2e7d32"
           }}>
             <strong>🧪 Test Account:</strong><br />
-            Email: test@example.com<br />
+            Username: testuser<br />
             Password: password123
           </div>
         )}
@@ -274,11 +254,11 @@ export default function SignIn() {
           </div>
         )}
 
-        {/* Email input */}
+        {/* Username input */}
         <div style={{ marginBottom: "20px" }}>
           <input
-            type="email"
-            placeholder="Email"
+            type="text"
+            placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             onKeyDown={handleKeyPress}
