@@ -24,10 +24,10 @@ func InitDB(ctx context.Context) (*sql.DB, error) {
 	cfg := mysql.NewConfig()
 	cfg.User = "ivyz"
 	cfg.Passwd = "alanfung"
-	var dbHost string = "usersandfriends-instance-1.csbvaawkysob.us-east-1.rds.amazonaws.com"
-	var dbPort int = 3306
-	var dbName string = "usersandfriends"
-	var dbEndpoint string = fmt.Sprintf("%s:%d", dbHost, dbPort)
+	cfg.Net = "tcp"
+	cfg.Addr = "usersandfriends.cluster-csbvaawkysob.us-east-1.rds.amazonaws.com:3306"
+	cfg.DBName = "usersandfriends"
+	
 
 	/*
 	authenticationToken, err := auth.BuildAuthToken(
@@ -37,19 +37,26 @@ func InitDB(ctx context.Context) (*sql.DB, error) {
 	}
 	*/
 
-    dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?tls=true&allowCleartextPasswords=true",
-        dbUser, dbPass, dbEndpoint, dbName,
-    )
+	// fmt.Printf(cfg.FormatDSN())
 
-	db, err := sql.Open("mysql", dsn)
+    var err error
+	db, err := sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
 		return nil, fmt.Errorf("open db: %w", err)
 	}
 
-	if err := db.Ping(); err != nil {
-		_ = db.Close()
-		return nil, fmt.Errorf("ping db: %w", err)
+	// if err := db.Ping(); err != nil {
+	// 	_ = db.Close()
+	// 	return nil, fmt.Errorf("ping db: %w", err)
+	// }
+
+	rows, err := db.Query("SELECT * FROM users LIMIT 1;")
+
+	if err != nil {
+		db.Close()
+		return nil, fmt.Errorf("Couldn't query db: %w", err)
 	}
+	defer rows.Close()
 
 	return db, nil
 }
