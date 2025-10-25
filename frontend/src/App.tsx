@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 
 import './App.css'
 import Homepage from './pages/Homepage.tsx'
+import Scoreboard from './pages/Scoreboard.tsx'
 
 
 function App() {
@@ -12,7 +13,7 @@ function App() {
   return (
     <>
       <div>
-          <Homepage />
+          <Scoreboard/>
       </div>
     </>
   )
