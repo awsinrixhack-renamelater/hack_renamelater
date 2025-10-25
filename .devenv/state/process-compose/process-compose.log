@@ -1,28 +1,15 @@
-{"level":"error","process":"react-frontend","replica":0,"message":"Running tasks     devenv:processes:react-frontend"}
-{"level":"error","process":"react-frontend","replica":0}
-{"level":"error","process":"react-frontend","replica":0,"message":"Running           devenv:processes:react-frontend"}
-{"level":"error","process":"flask-api","replica":0,"message":"Running tasks     devenv:processes:flask-api"}
-{"level":"error","process":"flask-api","replica":0}
-{"level":"error","process":"flask-api","replica":0,"message":"Running           devenv:processes:flask-api"}
 {"level":"error","process":"go-api","replica":0,"message":"Running tasks     devenv:processes:go-api"}
 {"level":"error","process":"go-api","replica":0}
 {"level":"error","process":"go-api","replica":0,"message":"Running           devenv:processes:go-api"}
-{"level":"error","process":"flask-api","replica":0,"message":"[devenv:processes:flask-api] Usage: flask run [OPTIONS]"}
-{"level":"error","process":"flask-api","replica":0,"message":"[devenv:processes:flask-api] Try 'flask run --help' for help."}
-{"level":"error","process":"flask-api","replica":0,"message":"[devenv:processes:flask-api] "}
-{"level":"error","process":"flask-api","replica":0,"message":"[devenv:processes:flask-api] Error: Could not import 'app'."}
-{"level":"error","process":"flask-api","replica":0,"message":"Failed            devenv:processes:flask-api (209.49ms)"}
-{"level":"error","process":"flask-api","replica":0,"message":"1 Failed"}
+{"level":"error","process":"flask-api","replica":0,"message":"Running tasks     devenv:processes:flask-api"}
 {"level":"error","process":"flask-api","replica":0}
-{"level":"error","process":"flask-api","replica":0,"message":"--- devenv:processes:flask-api failed with error: Task exited with status: exit status: 2"}
-{"level":"error","process":"flask-api","replica":0,"message":"--- devenv:processes:flask-api stdout:"}
-{"level":"error","process":"flask-api","replica":0,"message":"--- devenv:processes:flask-api stderr:"}
-{"level":"error","process":"flask-api","replica":0,"message":"0000.03: Usage: flask run [OPTIONS]"}
-{"level":"error","process":"flask-api","replica":0,"message":"0000.03: Try 'flask run --help' for help."}
-{"level":"error","process":"flask-api","replica":0,"message":"0000.03: "}
-{"level":"error","process":"flask-api","replica":0,"message":"0000.03: Error: Could not import 'app'."}
-{"level":"error","process":"flask-api","replica":0,"message":"---"}
-{"level":"error","process":"flask-api","replica":0}
+{"level":"error","process":"flask-api","replica":0,"message":"Running           devenv:processes:flask-api"}
+{"level":"error","process":"react-frontend","replica":0,"message":"Running tasks     devenv:processes:react-frontend"}
+{"level":"error","process":"react-frontend","replica":0}
+{"level":"error","process":"react-frontend","replica":0,"message":"Running           devenv:processes:react-frontend"}
+{"level":"info","process":"go-api","replica":0,"message":"Hello, Go Project!"}
+{"level":"error","process":"go-api","replica":0,"message":"Succeeded         devenv:processes:go-api (142.86ms)"}
+{"level":"error","process":"go-api","replica":0,"message":"1 Succeeded"}
 {"level":"error","process":"react-frontend","replica":0,"message":"[devenv:processes:react-frontend] npm error code ENOENT"}
 {"level":"error","process":"react-frontend","replica":0,"message":"[devenv:processes:react-frontend] npm error syscall open"}
 {"level":"error","process":"react-frontend","replica":0,"message":"[devenv:processes:react-frontend] npm error path /Users/afung/dev/hack/react-frontend/package.json"}
@@ -30,23 +17,36 @@
 {"level":"error","process":"react-frontend","replica":0,"message":"[devenv:processes:react-frontend] npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open '/Users/afung/dev/hack/react-frontend/package.json'"}
 {"level":"error","process":"react-frontend","replica":0,"message":"[devenv:processes:react-frontend] npm error enoent This is related to npm not being able to find a file."}
 {"level":"error","process":"react-frontend","replica":0,"message":"[devenv:processes:react-frontend] npm error enoent"}
-{"level":"error","process":"react-frontend","replica":0,"message":"[devenv:processes:react-frontend] npm error A complete log of this run can be found in: /Users/afung/.npm/_logs/2025-10-25T18_07_01_949Z-debug-0.log"}
-{"level":"error","process":"react-frontend","replica":0,"message":"Failed            devenv:processes:react-frontend (222.74ms)"}
+{"level":"error","process":"react-frontend","replica":0,"message":"[devenv:processes:react-frontend] npm error A complete log of this run can be found in: /Users/afung/.npm/_logs/2025-10-25T18_09_38_910Z-debug-0.log"}
+{"level":"error","process":"react-frontend","replica":0,"message":"Failed            devenv:processes:react-frontend (186.84ms)"}
 {"level":"error","process":"react-frontend","replica":0,"message":"1 Failed"}
 {"level":"error","process":"react-frontend","replica":0}
 {"level":"error","process":"react-frontend","replica":0,"message":"--- devenv:processes:react-frontend failed with error: Task exited with status: exit status: 254"}
 {"level":"error","process":"react-frontend","replica":0,"message":"--- devenv:processes:react-frontend stdout:"}
 {"level":"error","process":"react-frontend","replica":0,"message":"--- devenv:processes:react-frontend stderr:"}
-{"level":"error","process":"react-frontend","replica":0,"message":"0000.01: npm error code ENOENT"}
-{"level":"error","process":"react-frontend","replica":0,"message":"0000.01: npm error syscall open"}
-{"level":"error","process":"react-frontend","replica":0,"message":"0000.01: npm error path /Users/afung/dev/hack/react-frontend/package.json"}
-{"level":"error","process":"react-frontend","replica":0,"message":"0000.01: npm error errno -2"}
-{"level":"error","process":"react-frontend","replica":0,"message":"0000.01: npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open '/Users/afung/dev/hack/react-frontend/package.json'"}
-{"level":"error","process":"react-frontend","replica":0,"message":"0000.01: npm error enoent This is related to npm not being able to find a file."}
-{"level":"error","process":"react-frontend","replica":0,"message":"0000.01: npm error enoent"}
-{"level":"error","process":"react-frontend","replica":0,"message":"0000.01: npm error A complete log of this run can be found in: /Users/afung/.npm/_logs/2025-10-25T18_07_01_949Z-debug-0.log"}
+{"level":"error","process":"react-frontend","replica":0,"message":"0000.00: npm error code ENOENT"}
+{"level":"error","process":"react-frontend","replica":0,"message":"0000.00: npm error syscall open"}
+{"level":"error","process":"react-frontend","replica":0,"message":"0000.00: npm error path /Users/afung/dev/hack/react-frontend/package.json"}
+{"level":"error","process":"react-frontend","replica":0,"message":"0000.00: npm error errno -2"}
+{"level":"error","process":"react-frontend","replica":0,"message":"0000.00: npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open '/Users/afung/dev/hack/react-frontend/package.json'"}
+{"level":"error","process":"react-frontend","replica":0,"message":"0000.00: npm error enoent This is related to npm not being able to find a file."}
+{"level":"error","process":"react-frontend","replica":0,"message":"0000.00: npm error enoent"}
+{"level":"error","process":"react-frontend","replica":0,"message":"0000.00: npm error A complete log of this run can be found in: /Users/afung/.npm/_logs/2025-10-25T18_09_38_910Z-debug-0.log"}
 {"level":"error","process":"react-frontend","replica":0,"message":"---"}
 {"level":"error","process":"react-frontend","replica":0}
-{"level":"info","process":"go-api","replica":0,"message":"Hello, Go Project!"}
-{"level":"error","process":"go-api","replica":0,"message":"Succeeded         devenv:processes:go-api (1.67s)"}
-{"level":"error","process":"go-api","replica":0,"message":"1 Succeeded"}
+{"level":"error","process":"flask-api","replica":0,"message":"[devenv:processes:flask-api] Usage: flask run [OPTIONS]"}
+{"level":"error","process":"flask-api","replica":0,"message":"[devenv:processes:flask-api] Try 'flask run --help' for help."}
+{"level":"error","process":"flask-api","replica":0,"message":"[devenv:processes:flask-api] "}
+{"level":"error","process":"flask-api","replica":0,"message":"[devenv:processes:flask-api] Error: Could not import 'app'."}
+{"level":"error","process":"flask-api","replica":0,"message":"Failed            devenv:processes:flask-api (213.31ms)"}
+{"level":"error","process":"flask-api","replica":0,"message":"1 Failed"}
+{"level":"error","process":"flask-api","replica":0}
+{"level":"error","process":"flask-api","replica":0,"message":"--- devenv:processes:flask-api failed with error: Task exited with status: exit status: 2"}
+{"level":"error","process":"flask-api","replica":0,"message":"--- devenv:processes:flask-api stdout:"}
+{"level":"error","process":"flask-api","replica":0,"message":"--- devenv:processes:flask-api stderr:"}
+{"level":"error","process":"flask-api","replica":0,"message":"0000.01: Usage: flask run [OPTIONS]"}
+{"level":"error","process":"flask-api","replica":0,"message":"0000.01: Try 'flask run --help' for help."}
+{"level":"error","process":"flask-api","replica":0,"message":"0000.01: "}
+{"level":"error","process":"flask-api","replica":0,"message":"0000.01: Error: Could not import 'app'."}
+{"level":"error","process":"flask-api","replica":0,"message":"---"}
+{"level":"error","process":"flask-api","replica":0}
