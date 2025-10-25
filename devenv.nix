@@ -19,7 +19,7 @@
   };
 
   processes = {
-    go-api.exec = "go run go-api/main.go";
+    go-api.exec = "go run backend/api/main.go";
     flask-api.exec = "flask --app flask-api/app.py run";
     react-frontend.exec = "npm start --prefix react-frontend";
   };
