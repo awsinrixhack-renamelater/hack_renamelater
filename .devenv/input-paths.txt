@@ -1,0 +1,5 @@
+/Users/afung/dev/hack/.devenv/flake.json
+/Users/afung/dev/hack/.devenv.flake.nix
+/Users/afung/dev/hack/devenv.lock
+/Users/afung/dev/hack/devenv.nix
+/Users/afung/dev/hack/devenv.yaml
