@@ -31,15 +31,15 @@ export default function Welcome() {
   /**
    * Navigates to sign in page
    */
-  const handleSignIn = () => {
-    navigate('/signin');
+  const handleLogin = () => {
+    navigate('/Login');
   };
 
   /**
    * Navigates to sign up (via sign in page with sign up mode)
    */
   const handleSignUp = () => {
-    navigate('/signin');
+    navigate('/Login');
   };
 
   // ==================== RENDER ====================
@@ -91,6 +91,15 @@ export default function Welcome() {
         }}>
           Bons.ai is a platform that helps you study smarter while connecting with others.
         </p>
+        {/* Additional call-to-action */}
+        <h3 style={{
+          fontSize: "24px",
+          fontWeight: "600",
+          color: colors.navy,
+          marginBottom: "20px"
+        }}>
+          Ready to Get Started?
+        </h3>
         
         {/* Call-to-action buttons */}
         <div style={{
@@ -132,7 +141,7 @@ export default function Welcome() {
           
           {/* Sign In Button (Secondary) */}
           <button
-            onClick={handleSignIn}
+            onClick={handleLogin}
             style={{
               padding: "16px 40px",
               borderRadius: "12px",
@@ -155,7 +164,7 @@ export default function Welcome() {
               e.currentTarget.style.transform = "translateY(0)";
             }}
           >
-            Sign In
+            Login
           </button>
         </div>
       </div>
@@ -249,69 +258,9 @@ export default function Welcome() {
         borderTop: `2px solid ${colors.mint}`,
         marginTop: "auto"
       }}>
-        
-        {/* Additional call-to-action */}
-        <h3 style={{
-          fontSize: "24px",
-          fontWeight: "600",
-          color: colors.navy,
-          marginBottom: "20px"
-        }}>
-          Ready to Get Started?
-        </h3>
        
 
         {/* Secondary CTA buttons */}
-        <div style={{
-          display: "flex",
-          gap: "16px",
-          justifyContent: "center",
-          flexWrap: "wrap"
-        }}>
-          <button
-            onClick={handleSignUp}
-            style={{
-              padding: "12px 32px",
-              borderRadius: "8px",
-              border: "none",
-              backgroundColor: colors.coral,
-              color: colors.white,
-              fontSize: "16px",
-              fontWeight: "600",
-              cursor: "pointer",
-              transition: "background-color 0.3s ease"
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.navy}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.coral}
-          >
-            Create Account
-          </button>
-          
-          <button
-            onClick={handleSignIn}
-            style={{
-              padding: "12px 32px",
-              borderRadius: "8px",
-              border: `2px solid ${colors.coral}`,
-              backgroundColor: colors.white,
-              color: colors.coral,
-              fontSize: "16px",
-              fontWeight: "600",
-              cursor: "pointer",
-              transition: "all 0.3s ease"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colors.coral;
-              e.currentTarget.style.color = colors.white;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = colors.white;
-              e.currentTarget.style.color = colors.coral;
-            }}
-          >
-            Sign In
-          </button>
-        </div>
         
         {/* Copyright/Footer text */}
         <p style={{
