@@ -42,6 +42,9 @@ func main() {
 	router.HandleFunc("/gen", func(w http.ResponseWriter, r *http.Request) {
 		Gen(ctx, w, r)
 	})
+	router.HandleFunc("/eval", func(w http.ResponseWriter, r *http.Request) {
+		Eval(ctx, w, r)
+	})
 
 	log.Println("listening on :5000")
 	log.Fatal(http.ListenAndServe(":5000", router))
