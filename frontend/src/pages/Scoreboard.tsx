@@ -4,36 +4,45 @@ import { useNavigate } from "react-router-dom";
 
 export default function UserScores() {
   const navigate = useNavigate();
+  const username = localStorage.getItem("username");
+
+  if(!username) {
+    navigate("/login");
+  }
 
   const [users, setUsers] = useState
-  ([ { name: "Alice", score: 0 },
-     { name: "Bob", score: 0 },
-     { name: "Charlie", score: 0 }, ]);
+  ([ 
+    { name: username, score: 0 },
+    { name: "Alice", score: 0 },
+    { name: "Bob", score: 0 },
+    { name: "Claude", score: 0 },
+   ]);
 
-  const [newUser, setNewUser] = useState("");
+  const [newUser, setNewUser] = useState(username);
 
   // OKAY so yourName is Alice right now but we can change afterwards when we connect backend
-  const [yourName, setYourName] = useState("Alice"); 
+  const [yourName, setYourName] = useState(username); 
   // ^^^ OKAY so yourName is Alice
 
   function addUser() {
-    const checker = newUser.trim(); //trim() func removes whitespace @ start & end &&& checks if user input is empty \t and \n
-    // if empty return
-    if (!checker) return;
-    // does name already exist?
-    if (users.some((u) => u.name.toLowerCase() === checker.toLowerCase())) 
-      {
-      alert("That username already exists, please try something else!");
-      return;
-      }
-    // If passes checks add user
-    setUsers([...users, { name: checker, score: 0 }]);
-    //resets input box
-    setNewUser("");
+    // if(newUser == null) return;
+    // const checker = newUser.trim(); //trim() func removes whitespace @ start & end &&& checks if user input is empty \t and \n
+    // // if empty return
+    // if (!checker) return;
+    // // does name already exist?
+    // if (users.some((u) => u.name.toLowerCase() === checker.toLowerCase())) 
+    //   {
+    //   alert("That username already exists, please try something else!");
+    //   return;
+    //   }
+    // // If passes checks add user
+    // setUsers([...users, { name: checker, score: 0 }]);
+    // //resets input box
+    // setNewUser("");
   }
 
   // WE CAN GET RID OF THIS LATER WHEN CONNECT TO BACKEND
-  function increaseScore(index) { //incr by 1
+  function increaseScore(index: number) { //incr by 1
     setUsers(users.map( ( u, i ) => i === index ? { ...u, score: u.score + 1 } : u ));
   }
 
@@ -90,7 +99,7 @@ export default function UserScores() {
           // so that only name is shown on leader board, not ID
           placeholder="Enter user ID"
 
-          value={newUser} // controlled component = value is tied to state = we can reset it after adding user
+          // value={newUser} // controlled component = value is tied to state = we can reset it after adding user
           onChange={(e) => setNewUser(e.target.value)} // updates state as user types
           onKeyDown={(e) => e.key === 'Enter' && addUser()} // ALLOWS ADD W/ ENTER KEY
           style={{
@@ -143,7 +152,7 @@ export default function UserScores() {
             margin: "0 auto",
           }}
         >
-          <div>Your Score ({yourUser.name})</div>
+          <div>Your Score ( {yourUser.name} )</div>
           <div>{yourUser.score}</div>
         </div>
       )}
