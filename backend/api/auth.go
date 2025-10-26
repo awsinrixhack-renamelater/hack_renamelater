@@ -32,8 +32,12 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	grade := vars["grade"]
-	if strconv.Atoi(grade) < 0 || strconv.Atoi(grade) > 12 {
-		http.Error(w, "username invalid", http.StatusBadRequest)
+	gradeInt, err := strconv.Atoi(grade)
+	if err != nil {
+		http.Error(w, "atoi failure", http.StatusInternalServerError)
+	}
+	if gradeInt < 0 || gradeInt > 12 {
+		http.Error(w, "grade out of bounds", http.StatusBadRequest)
 		return
 	}
 	pwd := vars["pwd"]
