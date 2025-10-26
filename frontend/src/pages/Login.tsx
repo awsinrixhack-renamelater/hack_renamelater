@@ -147,31 +147,6 @@ export default function SignIn() {
   };
 
   /**
-   * Handles forgot password flow
-   */
-  const handleForgotPassword = async () => {
-    if (!username) {
-      setError("Please enter your username first");
-      return;
-    }
-
-    try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/forgot-password', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ username: username })
-      // });
-      
-      alert(`Password reset link sent for username: ${username}`);
-      
-    } catch (err) {
-      setError("Failed to send reset link");
-      console.error('Forgot password error:', err);
-    }
-  };
-
-  /**
    * Toggles between login and sign up modes
    */
   const toggleMode = () => {
@@ -371,56 +346,6 @@ export default function SignIn() {
               onFocus={(e) => e.currentTarget.style.borderColor = colors.teal}
               onBlur={(e) => e.currentTarget.style.borderColor = colors.mint}
             />
-          </div>
-        )}
-
-
-        {/* Remember me & Forgot password (only for login) */}
-        {!isSignUp && (
-          <div style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "24px"
-          }}>
-            {/* Remember me checkbox */}
-            <label style={{
-              display: "flex",
-              alignItems: "center",
-              cursor: "pointer",
-              fontSize: "14px",
-              color: colors.navy
-            }}>
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                style={{
-                  marginRight: "8px",
-                  cursor: "pointer"
-                }}
-              />
-              Remember me
-            </label>
-
-            {/* Forgot password link */}
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              style={{
-                background: "none",
-                border: "none",
-                color: colors.teal,
-                fontSize: "14px",
-                cursor: "pointer",
-                fontWeight: "500",
-                textDecoration: "none"
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"}
-              onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}
-            >
-              Forgot password?
-            </button>
           </div>
         )}
 
