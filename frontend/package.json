@@ -1,6 +1,5 @@
 {
   "name": "vite-project",
-  
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,8 +11,9 @@
   },
   "dependencies": {
     "@types/react-router-dom": "^5.3.3",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "better-react-mathjax": "^2.3.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.4"
   },
   "devDependencies": {

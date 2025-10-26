@@ -4,6 +4,12 @@
   padding: 2rem;
   text-align: center;
 }
+body {
+  background-color: #ffffff; 
+  margin: 0; 
+  padding: 0;
+}
+
 
 .logo {
   height: 6em;
@@ -26,6 +32,7 @@
     transform: rotate(360deg);
   }
 }
+
 
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
