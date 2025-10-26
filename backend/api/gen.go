@@ -17,7 +17,7 @@ func Gen(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	client := bedrock.NewFromConfig(cfg)
-	
+
 	result, err := client.ListFoundationModels(ctx, &bedrock.ListFoundationModelsInput{})
 	if err != nil {
 		logMsg := fmt.Sprintf("Couldn't list foundation models: %v", err)

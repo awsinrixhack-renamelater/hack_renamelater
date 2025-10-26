@@ -22,7 +22,6 @@ type contextKey string
 
 const claimsKey contextKey = "claims"
 
-
 func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
