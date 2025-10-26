@@ -6,11 +6,19 @@ import (
 	"fmt"
 	"net/http"
 
+	"regexp"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
 )
 
+func RemoveReasoningBlock(s string) string {
+	re := regexp.MustCompile(`(?s)<reasoning>.*?</reasoning>`)
+	return re.ReplaceAllString(s, "")
+}
+
+// generates a problem
 func Gen(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion("us-east-1"))
 	if err != nil {
@@ -34,6 +42,7 @@ func Gen(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	prompt := fmt.Sprintf(`
+Output a JSON only - no reasoning, no explanations, no commentary.
 You are an expert educator creating high-quality assessment questions on: %s
 
 Follow these rules strictly:
@@ -88,13 +97,82 @@ Example output format:
 		var latexObj struct {
 			QuestionLatex string `json:"question_latex"`
 		}
-		if err := json.Unmarshal([]byte(modelResp.OutputText), &latexObj); err == nil && latexObj.QuestionLatex != "" {
+		cleaned := RemoveReasoningBlock(modelResp.OutputText)
+		if err := json.Unmarshal([]byte(cleaned), &latexObj); err == nil && latexObj.QuestionLatex != "" {
 			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 			w.Write([]byte(latexObj.QuestionLatex))
 			return
 		}
+		var openAIResp struct {
+			Choices []struct {
+				Message struct {
+					Content string `json:"content"`
+				} `json:"message"`
+			} `json:"choices"`
+		}
+		if err := json.Unmarshal([]byte(modelResp.OutputText), &openAIResp); err == nil && len(openAIResp.Choices) > 0 {
+			content := openAIResp.Choices[0].Message.Content
+			contentClean := RemoveReasoningBlock(content)
+			start := -1
+			end := -1
+			for i := 0; i < len(contentClean); i++ {
+				if contentClean[i] == '{' && start == -1 {
+					start = i
+				}
+				if contentClean[i] == '}' {
+					end = i
+				}
+			}
+			if start != -1 && end != -1 && end > start {
+				jsonStr := contentClean[start : end+1]
+				if err := json.Unmarshal([]byte(jsonStr), &latexObj); err == nil && latexObj.QuestionLatex != "" {
+					w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+					w.Write([]byte(latexObj.QuestionLatex))
+					return
+				}
+			}
+			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+			w.Write([]byte(contentClean))
+			return
+		}
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.Write([]byte(modelResp.OutputText))
+		return
+	}
+
+	var openAIResp struct {
+		Choices []struct {
+			Message struct {
+				Content string `json:"content"`
+			} `json:"message"`
+		} `json:"choices"`
+	}
+	if err := json.Unmarshal(resp.Body, &openAIResp); err == nil && len(openAIResp.Choices) > 0 {
+		content := openAIResp.Choices[0].Message.Content
+		var latexObj struct {
+			QuestionLatex string `json:"question_latex"`
+		}
+		contentClean := RemoveReasoningBlock(content)
+		start := -1
+		end := -1
+		for i := 0; i < len(contentClean); i++ {
+			if contentClean[i] == '{' && start == -1 {
+				start = i
+			}
+			if contentClean[i] == '}' {
+				end = i
+			}
+		}
+		if start != -1 && end != -1 && end > start {
+			jsonStr := contentClean[start : end+1]
+			if err := json.Unmarshal([]byte(jsonStr), &latexObj); err == nil && latexObj.QuestionLatex != "" {
+				w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+				w.Write([]byte(latexObj.QuestionLatex))
+				return
+			}
+		}
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.Write([]byte(contentClean))
 		return
 	}
 
