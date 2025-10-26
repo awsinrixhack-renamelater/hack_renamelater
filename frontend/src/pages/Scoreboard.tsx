@@ -18,27 +18,24 @@ export default function UserScores() {
     { name: "Claude", score: 0 },
    ]);
 
-  const [newUser, setNewUser] = useState(username);
+  const [newUser, setNewUser] = useState("");
 
-  // OKAY so yourName is Alice right now but we can change afterwards when we connect backend
+  // OKAY so yourName is username
   const [yourName, setYourName] = useState(username); 
-  // ^^^ OKAY so yourName is Alice
 
   function addUser() {
-    // if(newUser == null) return;
-    // const checker = newUser.trim(); //trim() func removes whitespace @ start & end &&& checks if user input is empty \t and \n
-    // // if empty return
-    // if (!checker) return;
-    // // does name already exist?
-    // if (users.some((u) => u.name.toLowerCase() === checker.toLowerCase())) 
-    //   {
-    //   alert("That username already exists, please try something else!");
-    //   return;
-    //   }
-    // // If passes checks add user
-    // setUsers([...users, { name: checker, score: 0 }]);
-    // //resets input box
-    // setNewUser("");
+    async () => {
+      let token = localStorage.getItem("authToken")
+      const res = await fetch(`http://go-api-env.eba-tm4z5dgu.us-east-1.elasticbeanstalk.com/addfriend?user1=${yourName}&?user2=${newUser}`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      if (res.status != 200) {
+        console.log("Could not add friend")
+      }
+    }
   }
 
   // WE CAN GET RID OF THIS LATER WHEN CONNECT TO BACKEND
@@ -92,12 +89,12 @@ export default function UserScores() {
       {/* INPUTS */}
       {/* specifically: username input box and add user button */}
       <div style={{ marginBottom: "1rem" }}>
-        {/* GPT came in clutch with template once more */}
+        {}
         <input
           type="text"
           // FOR BACK END PEEPS!!! Need to connect User ID to User's Name 
           // so that only name is shown on leader board, not ID
-          placeholder="Enter user ID"
+          placeholder="Enter username"
 
           // value={newUser} // controlled component = value is tied to state = we can reset it after adding user
           onChange={(e) => setNewUser(e.target.value)} // updates state as user types

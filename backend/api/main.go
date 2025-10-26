@@ -32,16 +32,16 @@ func main() {
 	mux.HandleFunc("/login", app.Login)
 
 	protected := http.NewServeMux()
-	protected.HandleFunc("/addfriend", app.addFriend)
-	protected.HandleFunc("/getallfriends/{user}", app.getAllFriends)
-	protected.HandleFunc("/gen", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/addfriend", app.addFriend)
+	mux.HandleFunc("/getallfriends/{user}", app.getAllFriends)
+	mux.HandleFunc("/gen", func(w http.ResponseWriter, r *http.Request) {
 		Gen(ctx, w, r)
 	})
 	protected.HandleFunc("/eval", func(w http.ResponseWriter, r *http.Request) {
 		Eval(ctx, w, r)
 	})
-	mux.Handle("/addfriend", Auth(protected))
-	mux.Handle("/getallfriends/{user}", Auth(protected))
+	// mux.Handle("/addfriend", Auth(protected))
+	// mux.Handle("/getallfriends/{user}", Auth(protected))
 	mux.Handle("/gen", Auth(protected))
 	mux.Handle("/eval", Auth(protected))
 	handler := cors.Default().Handler(mux)
