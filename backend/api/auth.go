@@ -35,6 +35,7 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 	gradeInt, err := strconv.Atoi(grade)
 	if err != nil {
 		http.Error(w, "atoi failure", http.StatusInternalServerError)
+		return
 	}
 	if gradeInt < 0 || gradeInt > 12 {
 		http.Error(w, "grade out of bounds", http.StatusBadRequest)
