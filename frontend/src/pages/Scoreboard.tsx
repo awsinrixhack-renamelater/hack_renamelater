@@ -68,7 +68,7 @@ export default function UserScores() {
         flexDirection: "column", // stacks banners vertically
         alignItems: "center", // centers horizontally
         minHeight: "100vh", // height of viewport (viewport = visible area of webpage!)
-        width: "100vw", // width of viewport
+        width: "100%", // width of viewport
         backgroundColor: colors.white,
         fontFamily: "'Poppins', sans-serif", // clean and yet pretty
         color: colors.navy,
