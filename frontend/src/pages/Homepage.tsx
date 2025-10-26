@@ -172,7 +172,7 @@ $$
           height: "100vh",
           display: "flex",
           flexDirection: "column",
-          backgroundColor: colors.white,
+          background: colors.white,
           position: "relative",
         }}
       >
