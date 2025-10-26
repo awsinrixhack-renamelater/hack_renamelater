@@ -1,5 +1,3 @@
-import { useState } from 'react'
-import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 
 import './App.css'
@@ -10,8 +8,6 @@ import Login from './pages/Login.tsx'
 
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <Router>
       <Routes>
@@ -24,9 +20,9 @@ function App() {
         {/* this is for connecting Scoreboard with Homepage */}
         <Route path="/" element={<Homepage />} />
         <Route path="/about" element={<Scoreboard />} />
-        
+        <Route path="*" element={<Navigate to="/welcome" replace />} />
       </Routes>
-    </Router>
+  </Router>
   )
 }
 
