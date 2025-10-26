@@ -11,6 +11,7 @@
     pkgs.nodejs
     pkgs.git
     pkgs.typescript
+    
   ];
 
   languages = {
@@ -25,7 +26,10 @@
       exec = "go run .";
     };
     flask-api.exec = "flask --app flask-api/app.py run";
-    react-frontend.exec = "npm start --prefix react-frontend";
+    frontend = {
+      cwd = "frontend";
+      exec = "npm i && npm run dev";
+    };
   };
 }
 
