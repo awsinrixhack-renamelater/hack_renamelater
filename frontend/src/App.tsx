@@ -4,6 +4,7 @@ import './App.css'
 import Homepage from './pages/Homepage.tsx'
 import Scoreboard from './pages/Scoreboard.tsx'
 import Login from './pages/Login.tsx'
+import Welcome from './pages/Welcome.tsx'
 
 
 
@@ -11,10 +12,12 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/Login" replace />} />
-        <Route path="/Login" element={<Login />} />
+        <Route path="/" element={<Navigate to="/welcome" replace />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Homepage />} />
         <Route path="/scoreboard" element={<Scoreboard />} />
+        <Route path="/welcome" element={<Welcome />} />
+
         <Route path="*" element={<Navigate to="/Login" replace />} />
 
         {/* this is for connecting Scoreboard with Homepage */}
