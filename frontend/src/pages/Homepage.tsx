@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 
@@ -14,17 +14,19 @@ interface Message {
  * Homepage Component
  */
 export default function Homepage() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // for navigation
 
   // ==================== STATE ====================
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
-  const [showActionButtons, setShowActionButtons] = useState(false);
-  const [feedback, setFeedback] = useState<null | "correct" | "wrong">(null);
+  const [showActionButtons, setShowActionButtons] = useState(false); // show "One more question" and "Shift Subject" buttons
+  const [feedback, setFeedback] = useState<null | "correct" | "wrong">(null); // user answer feedback
   const [showSidebar, setShowSidebar] = useState(false);
   const [currentHint, setCurrentHint] = useState("");
+  const [isFirstInput, setIsFirstInput] = useState(true); // check if is the first input
+  const chatEndRef = useRef<HTMLDivElement>(null); // auto scroll ref
 
   // ==================== COLORS ====================
   const colors = {
@@ -42,6 +44,11 @@ export default function Homepage() {
     setUsername(user || "User");
   }, []);
 
+  //  ==================== AUTO SCROLL TO BOTTOM ====================
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   // ==================== HANDLE SEND (USER QUESTION) ====================
   const handleSend = async () => {
     if (input.trim() === "" || isLoading) return;
@@ -53,25 +60,37 @@ export default function Homepage() {
     setFeedback(null);
 
     try {
-      const aiReply = `
-Here’s an example of a quadratic formula:<br/><br/>
-$$
-x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}
-$$
+      if (isFirstInput) {
+        // the first input: user specifies topic, AI asks first question
+        const aiReply = `
+Great! Let's start with this topic.<br/><br/>
+Here's your first question:<br/><br/>
+$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$
 <br/>
-Also, consider another formula for demonstration:<br/><br/>
-$$
-y = \\frac{1}{2}gt^2
-$$
+Solve for x when a=1, b=3, c=2.
 `;
-      setTimeout(() => {
-        setMessages((prev) => [...prev, { role: "ai", content: aiReply }]);
-        setShowActionButtons(true);
+        setTimeout(() => {
+          setMessages((prev) => [...prev, { role: "ai", content: aiReply }]);
+          setIsFirstInput(false); // mark that the first input has been made
+          setIsLoading(false);
+        }, 1000);
+      } else {
+        // the subsequent inputs: user answers the question, AI evaluates
+        const aiReply = `
+Here's the evaluation of your answer:<br/><br/>
+The quadratic formula is: $x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$
+<br/>
+Also, consider: $y = \\frac{1}{2}gt^2$
+`;
+        setTimeout(() => {
+          setMessages((prev) => [...prev, { role: "ai", content: aiReply }]);
+          setShowActionButtons(true);
 
-        const randomFeedback = Math.random() > 0.5 ? "correct" : "wrong";
-        setFeedback(randomFeedback);
-        setIsLoading(false);
-      }, 1000);
+          const randomFeedback = Math.random() > 0.5 ? "correct" : "wrong"; 
+          setFeedback(randomFeedback);
+          setIsLoading(false);
+        }, 1000);
+      }
     } catch (error) {
       console.error(error);
       setMessages((prev) => [
@@ -91,7 +110,7 @@ $$
 
     try {
       const newQuestion = `
-Here’s a new question for you:<br/><br/>
+Here's a new question for you:<br/><br/>
 Solve for x in the equation:<br/>
 $$
 2x^2 + 3x - 5 = 0
@@ -105,7 +124,7 @@ $$
       console.error(error);
       setMessages((prev) => [
         ...prev,
-        { role: "ai", content: "❌ Error: Failed to get new question." },
+        { role: "ai", content: "❌ Error: Failed to get new question." }, 
       ]);
       setIsLoading(false);
     }
@@ -113,12 +132,12 @@ $$
 
   // ==================== HANDLE SHIFT SUBJECT ====================
   const handleShiftSubject = () => {
-    // 清空对话记录，回到主题选择状态
     setMessages([]);
     setInput("");
     setShowActionButtons(false);
     setFeedback(null);
     setShowSidebar(false);
+    setIsFirstInput(true); // check if is the first input 
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -138,16 +157,18 @@ $$
 
   // ==================== RENDER ====================
   return (
-    
     <MathJaxContext
       config={{
         loader: { load: ["input/tex", "output/chtml"] },
-        tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["$$", "$$"]] },
+        tex: { 
+          inlineMath: [["\\(", "\\)"], ["$", "$"]], 
+          displayMath: [["$", "$"], ["\\[", "\\]"]] 
+        },
       }}
     >
       <div
         style={{
-          width: "100vw",
+          width: "100%",
           height: "100vh",
           display: "flex",
           flexDirection: "column",
@@ -155,13 +176,32 @@ $$
           position: "relative",
         }}
       >
+        {/* ==================== RANKING BUTTON ==================== */}
+        <div style={{ padding: "12px 20px" }}>  
+          <button 
+            onClick={() => navigate("/Scoreboard")} 
+            style={{ 
+              backgroundColor: colors.teal, 
+              border: "2px solid white", 
+              color: "white", 
+              width: "100px", 
+              padding: "10px 14px", 
+              borderRadius: "8px", 
+              fontSize: "1rem", 
+              cursor: "pointer"
+            }}
+          >
+            Ranking
+          </button>
+        </div>
+
         {/* ==================== CHAT AREA ==================== */}
         <div
           style={{
             flex: 1,
+            width: "100%",
             display: "flex",
             flexDirection: "column",
-            padding: "40px 20px",
             overflowY: "auto",
           }}
         >
@@ -169,17 +209,17 @@ $$
             <div
               style={{
                 flex: 1,
+                width: "100%",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
-                padding: "40px 20px",
               }}
             >
-              <h1 style={{ fontSize: "36px", marginBottom: "20px", color: colors.navy, fontWeight: 600 }}>
+              <h1 style={{ fontSize: "36px", marginBottom: "20px", color: colors.navy, fontWeight: 600, textAlign: "center" }}>
                 Which topic do you want to learn?
               </h1>
-              <p style={{ fontSize: "18px", color: colors.teal, marginBottom: "50px" }}>
+              <p style={{ fontSize: "18px", color: colors.teal, marginBottom: "50px", textAlign: "center" }}>
                 Ask me anything!
               </p>
             </div>
@@ -195,55 +235,39 @@ $$
                 {msg.role === "user" ? (
                   <div
                     style={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "center",
-                      marginBottom: "24px",
+                      width: "100vw",
+                      maxWidth: "800px",
+                      padding: "24px 40px",
+                      borderRadius: "16px",
+                      backgroundColor: colors.mint,
+                      color: colors.navy,
+                      fontSize: "16px",
+                      lineHeight: "1.8",
+                      textAlign: "center",
+                      marginBottom: "16px",
                     }}
                   >
-                    <div
-                      style={{
-                        width: "100%",
-                        maxWidth: "900px",
-                        padding: "20px 40px",
-                        borderRadius: "16px",
-                        backgroundColor: colors.mint,
-                        color: colors.navy,
-                        fontSize: "18px",
-                        textAlign: "center",
-                        fontWeight: "500",
-                      }}
-                    >
-                      {msg.content}
-                    </div>
+                    {msg.content}
                   </div>
                 ) : (
-                  <div>
+                  <>
                     <div
                       style={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "center",
+                        width: "100vw",
+                        maxWidth: "800px",
+                        padding: "24px 40px",
+                        borderRadius: "16px",
+                        backgroundColor: colors.ltbu,
+                        color: colors.navy,
+                        fontSize: "16px",
+                        lineHeight: "1.8",
+                        textAlign: "center",
                         marginBottom: "16px",
                       }}
                     >
-                      <div
-                        style={{
-                          width: "100%",
-                          maxWidth: "900px",
-                          padding: "24px 40px",
-                          borderRadius: "16px",
-                          backgroundColor: colors.ltbu,
-                          color: colors.navy,
-                          fontSize: "16px",
-                          lineHeight: "1.8",
-                          textAlign: "left",
-                        }}
-                      >
-                        <MathJax dynamic>
-                          <div dangerouslySetInnerHTML={{ __html: msg.content }} />
-                        </MathJax>
-                      </div>
+                      <MathJax dynamic>
+                        <div dangerouslySetInnerHTML={{ __html: msg.content }} />
+                      </MathJax>
                     </div>
 
                     {isLastAiMessage && (
@@ -281,7 +305,7 @@ $$
                         </button>
                       </div>
                     )}
-                  </div>
+                  </>
                 )}
               </div>
             );
@@ -303,6 +327,9 @@ $$
               {feedback === "correct" ? "🎉 Congratulation!" : "❌ Wrong answer!"}
             </div>
           )}
+          
+          {/* auto rowing */}
+          <div ref={chatEndRef} />
         </div>
 
         {/* ==================== INPUT AREA ==================== */}
@@ -313,7 +340,7 @@ $$
             backgroundColor: colors.white,
           }}
         >
-          <div style={{ width: "100%", maxWidth: "900px", margin: "0 auto", display: "flex", gap: "12px" }}>
+          <div style={{ width: "100%", margin: "0 auto", display: "flex", gap: "12px" }}>
             <input
               type="text"
               value={input}
@@ -365,7 +392,7 @@ $$
               >
                 One more question
               </button>
-                <button onClick={() => navigate("/Scoreboard")} style={{ backgroundColor: colors.teal, border: "2px solid white", color: "white", width: "500px", padding: "10px 14px", borderRadius: "8px", fontSize: "1rem", cursor: "pointer", }} > See your score and ranking here! </button>
+
               <button
                 onClick={handleShiftSubject}
                 style={{
@@ -431,16 +458,10 @@ $$
             </div>
             <div style={{ flex: 1, padding: "24px", overflowY: "auto", color: colors.navy, fontSize: "15px", lineHeight: "1.8" }}>
               <div style={{ whiteSpace: "pre-line" }}>{currentHint}</div>
-              
             </div>
           </div>
         )}
       </div>
-
-      <div style={{ display: "flex", justifyContent: "center" }}>
-  
-</div>
     </MathJaxContext>
-    
   );
 }
