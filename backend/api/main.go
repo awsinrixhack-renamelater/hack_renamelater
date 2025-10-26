@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 type App struct {
@@ -16,7 +16,7 @@ type App struct {
 
 func main() {
 	ctx := context.Background()
-	router := mux.NewRouter()
+	mux := http.NewServeMux()
 	fmt.Printf("started backend api")
 
 	db, err := InitDB(ctx)
@@ -25,27 +25,27 @@ func main() {
 	}
 	app := &App{DB: db}
 
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Hello, World!")
 	})
-	router.HandleFunc("/signup", app.Signup)
-	router.HandleFunc("/login", app.Login)
-	router.HandleFunc("/addfriend", app.addFriend)
-	router.HandleFunc("/getallfriends/{user}", app.getAllFriends)
+	mux.HandleFunc("/signup", app.Signup)
+	mux.HandleFunc("/login", app.Login)
 
-	protected := router.PathPrefix("/").Subrouter()
-	protected.Use(app.Auth)
-	protected.HandleFunc("/testDB", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Testing DB")
-		testDB(app, ctx)
-	})
-	router.HandleFunc("/gen", func(w http.ResponseWriter, r *http.Request) {
+	protected := http.NewServeMux()
+	protected.HandleFunc("/addfriend", app.addFriend)
+	protected.HandleFunc("/getallfriends/{user}", app.getAllFriends)
+	protected.HandleFunc("/gen", func(w http.ResponseWriter, r *http.Request) {
 		Gen(ctx, w, r)
 	})
-	router.HandleFunc("/eval", func(w http.ResponseWriter, r *http.Request) {
+	protected.HandleFunc("/eval", func(w http.ResponseWriter, r *http.Request) {
 		Eval(ctx, w, r)
 	})
+	mux.Handle("/addfriend", Auth(protected))
+	mux.Handle("/getallfriends/{user}", Auth(protected))
+	mux.Handle("/gen", Auth(protected))
+	mux.Handle("/eval", Auth(protected))
+	handler := cors.Default().Handler(mux)
 
 	log.Println("listening on :5000")
-	log.Fatal(http.ListenAndServe(":5000", router))
+	log.Fatal(http.ListenAndServe(":5000", handler))
 }
