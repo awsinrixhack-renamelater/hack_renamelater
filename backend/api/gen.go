@@ -82,18 +82,23 @@ Example output format:
 		return
 	}
 
-	// ✅ Optional: parse the model output JSON to return only the question
 	var modelResp struct {
 		OutputText string `json:"output_text"`
 	}
 	if err := json.Unmarshal(resp.Body, &modelResp); err == nil && modelResp.OutputText != "" {
-		// If Bedrock wraps text in output_text, unwrap and return parsed JSON cleanly
-		w.Header().Set("Content-Type", "application/json")
+		var latexObj struct {
+			QuestionLatex string `json:"question_latex"`
+		}
+		if err := json.Unmarshal([]byte(modelResp.OutputText), &latexObj); err == nil && latexObj.QuestionLatex != "" {
+			w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+			w.Write([]byte(latexObj.QuestionLatex))
+			return
+		}
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.Write([]byte(modelResp.OutputText))
 		return
 	}
 
-	// Otherwise, fallback to raw body
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(resp.Body)
 }
