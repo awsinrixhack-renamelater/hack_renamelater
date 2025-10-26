@@ -15,28 +15,12 @@ import (
 
 
 func InitDB(ctx context.Context) (*sql.DB, error) {
-	/*
-	cfg, err := config.LoadDefaultConfig(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("loading aws config: %w", err)
-	}
-	*/
 	cfg := mysql.NewConfig()
 	cfg.User = "ivyz"
 	cfg.Passwd = "alanfung"
 	cfg.Net = "tcp"
 	cfg.Addr = "usersandfriends.cluster-csbvaawkysob.us-east-1.rds.amazonaws.com:3306"
 	cfg.DBName = "usersandfriends"
-	
-
-	/*
-	authenticationToken, err := auth.BuildAuthToken(
-		ctx, dbEndpoint, region, dbUser, cfg.Credentials)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create authentication token: %w", err)
-	}
-	*/
-
 	// fmt.Printf(cfg.FormatDSN())
 
     var err error
@@ -45,16 +29,15 @@ func InitDB(ctx context.Context) (*sql.DB, error) {
 		return nil, fmt.Errorf("open db: %w", err)
 	}
 
-	// if err := db.Ping(); err != nil {
-	// 	_ = db.Close()
-	// 	return nil, fmt.Errorf("ping db: %w", err)
-	// }
+	if err := db.Ping(); err != nil {
+		_ = db.Close()
+		return nil, fmt.Errorf("ping db: %w", err)
+	}
 
 	rows, err := db.Query("SELECT * FROM users LIMIT 1;")
-
 	if err != nil {
 		db.Close()
-		return nil, fmt.Errorf("Couldn't query db: %w", err)
+		return nil, fmt.Errorf("couldn't query db: %w", err)
 	}
 	defer rows.Close()
 
@@ -62,13 +45,11 @@ func InitDB(ctx context.Context) (*sql.DB, error) {
 }
 
 func testDB(app *App, ctx context.Context) error {
-	// If the App provided a DB pool, use it first to validate connectivity.
 	if app != nil && app.DB != nil {
 		log.Println("testing DB connection via app.DB")
 		pingCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 		defer cancel()
 		if err := app.DB.PingContext(pingCtx); err != nil {
-			// try a small query as a fallback (may surface different errors)
 			log.Printf("PingContext failed: %v; trying SELECT 1", err)
 			qCtx, qCancel := context.WithTimeout(ctx, 5*time.Second)
 			defer qCancel()

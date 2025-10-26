@@ -17,21 +17,25 @@ type App struct {
 func main() {
 	ctx := context.Background();
 	router := mux.NewRouter();
+	fmt.Printf("started backend api")
 
-	fmt.Printf("Started backend api")
+	db, err := InitDB(ctx);
+	if err != nil {
+		log.Fatalf("cannot access db: %v", err);
+	}
+	app := &App{DB: db}
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Hello, World!");
 	})
-	// router.HandleFunc("/signup/{id}/{pwd}", app.Signup);
-	router.HandleFunc("/testDB", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Testing DB");
-		db, err := InitDB(ctx);
-		if err != nil {
-			log.Fatalf("cannot access db: %v", err);
-		}
-		app := &App{DB: db};
-		testDB(app, ctx);
+	router.HandleFunc("/signup/{username}/{pwd}", app.Signup)
+	router.HandleFunc("/login/{username}/{pwd}", app.Login)
+
+	protected := router.PathPrefix("/").Subrouter()
+	protected.Use(app.Auth)
+	protected.HandleFunc("/testDB", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "Testing DB")
+		testDB(app, ctx)
 	})
 
 	log.Println("listening on :5000")
