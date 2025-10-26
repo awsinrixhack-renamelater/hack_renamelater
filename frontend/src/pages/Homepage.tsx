@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 /**
  * Message interface - defines the structure of chat messages
  * @property role - Identifies if message is from 'user' or 'ai'
@@ -198,6 +199,7 @@ export default function Homepage() {
   // ==================== RENDER ====================
   
   return (
+  
     <div style={{ 
       width: "100vw",
       height: "100vh",
@@ -298,6 +300,44 @@ export default function Homepage() {
             </div>
           </div>
         )}
+    
+    {/* button routes from homepage to scoreboard*/}
+  
+  <nav
+    style={{
+      width: "100%",
+      position: "fixed",
+      top: 0,
+      left: 0,
+      backgroundColor: colors.mint,
+      border: "2px solid white",
+      padding: "1rem",
+      display: "flex",
+      justifyContent: "center",
+      zIndex: 1000,
+    }}
+>
+  <button
+    onClick={() => navigate("/Scoreboard")}
+   style={{
+      backgroundColor: colors.teal,
+      border: "2px solid white",
+      color: "white",
+
+      padding: "10px 20px",
+      borderRadius: "8px",
+      fontSize: "1rem",
+      cursor: "pointer",
+    }}
+  >
+    See your score and ranking here!
+  </button>
+
+</nav>
+
+
+
+    {/* ^^^ button routes from homepage to scoreboard*/}
 
         {/* ==================== CONVERSATION STATE ==================== */}
         {hasConversation && (
