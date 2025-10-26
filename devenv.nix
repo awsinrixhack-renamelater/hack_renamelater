@@ -10,6 +10,7 @@
     pkgs.python313Packages.flask
     pkgs.nodejs
     pkgs.git
+    pkgs.typescript
   ];
 
   languages = {
