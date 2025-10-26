@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-
+import bonsailogo from "../assets/bonsailogo.png";
 /**
  * Welcome Component - Landing page for unauthenticated users
  * Serves as the entry point before authentication
@@ -56,6 +56,21 @@ export default function Welcome() {
       margin: "0",
       maxWidth: "none"
     }}>
+
+<img
+  src={bonsailogo} 
+  alt="bonsai"
+  style={{
+    position: "absolute",
+    top: "20px",
+    right: "10px",
+    width: "150px",
+    height: "auto",
+    opacity: 0.9,
+    pointerEvents: "none",
+    zIndex: 5,
+  }}
+/>
       
       {/* ==================== HERO SECTION ==================== */}
       <div style={{
