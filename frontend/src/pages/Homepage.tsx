@@ -1,354 +1,252 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { MathJax, MathJaxContext } from "better-react-mathjax";
 
 /**
- * Message interface - defines the structure of chat messages
- * @property role - Identifies if message is from 'user' or 'ai'
- * @property content - The actual text content of the message
+ * Message interface
  */
 interface Message {
-  role: 'user' | 'ai';
+  role: "user" | "ai";
   content: string;
 }
 
 /**
- * Homepage Component - Main chat interface
- * Handles user questions, AI responses, and hint explanations
+ * Homepage Component
  */
 export default function Homepage() {
-  // ==================== ROUTER ====================
-  
-  /** Navigation hook for logout redirect */
   const navigate = useNavigate();
-  
-  // ==================== STATE MANAGEMENT ====================
-  
-  /** Array of all messages in the conversation */
-  const [messages, setMessages] = useState<Message[]>([]);
-  
-  /** Current text in the input field */
-  const [input, setInput] = useState("");
-  
-  /** Controls visibility of the hint sidebar */
-  const [showSidebar, setShowSidebar] = useState(false);
-  
-  /** Content displayed in the hint sidebar */
-  const [currentHint, setCurrentHint] = useState("");
-  
-  /** Tracks if we're waiting for an API response */
-  const [isLoading, setIsLoading] = useState(false);
-  
-  /** Username from localStorage */
-  const [username, setUsername] = useState("");
-  
-  // ==================== AUTHENTICATION CHECK ====================
-  
-  /**
-   * Check if user is authenticated on component mount
-   * Redirect to signin if no auth token found
-   */
-  useEffect(() => {
-    const authToken = localStorage.getItem('authToken');
-    const user = localStorage.getItem('username');
-    
-    if (!authToken) {
-      // No authentication, redirect to signin
-      navigate('/signin');
-    } else {
-      // Set username for display
-      setUsername(user || 'User');
-    }
-  }, [navigate]);
-  
-  // ==================== COLOR THEME ====================
 
-  /** Centralized color palette for consistent theming */
+  // ==================== STATE ====================
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [username, setUsername] = useState("");
+  const [showActionButtons, setShowActionButtons] = useState(false);
+  const [feedback, setFeedback] = useState<null | "correct" | "wrong">(null);
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [currentHint, setCurrentHint] = useState("");
+
+  // ==================== COLORS ====================
   const colors = {
-    ltgr: "#a2d3d7ff",     // Accent color for hints
-    ltbu: "#c5d7edff",      // AI message background
-    mint: "#B7D6CC",       // User message background, borders
-    teal: "#4C96A8",       // Primary action color
-    navy: "#2C3E58",       // Text color, hover states
-    white: "#ffffff",      // Background color
+    mint: "#B7D6CC",
+    teal: "#4C96A8",
+    navy: "#2C3E58",
+    ltgr: "#a2d3d7ff",
+    ltbu: "#c5d7edff",
+    white: "#ffffff",
   };
 
-  // ==================== EVENT HANDLERS ====================
-  
-  /**
-   * Handles sending a message to the AI
-   * 1. Validates input is not empty
-   * 2. Adds user message to chat
-   * 3. Calls backend API (TODO)
-   * 4. Adds AI response to chat
-   */
+  // ==================== EFFECTS ====================
+  useEffect(() => {
+    const user = localStorage.getItem("username");
+    setUsername(user || "User");
+  }, []);
+
+  // ==================== HANDLE SEND (USER QUESTION) ====================
   const handleSend = async () => {
-    // Prevent sending empty messages or multiple requests
     if (input.trim() === "" || isLoading) return;
 
-    // Save user message before clearing input
     const userMessage = input;
-    
-    // Add user message to chat immediately
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
-    
-    // Clear input field
+    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setInput("");
-    
-    // Show loading state
     setIsLoading(true);
+    setFeedback(null);
 
     try {
-      // TODO: Replace with actual backend API call
-      // Example API integration:
-      // const response = await fetch('/api/chat', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ message: userMessage })
-      // });
-      // const data = await response.json();
-      
-      // TEMPORARY: Simulated AI response for development
+      const aiReply = `
+Here’s an example of a quadratic formula:<br/><br/>
+$$
+x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}
+$$
+<br/>
+Also, consider another formula for demonstration:<br/><br/>
+$$
+y = \\frac{1}{2}gt^2
+$$
+`;
       setTimeout(() => {
-        setMessages(prev => [...prev, { 
-          role: 'ai', 
-          content: `Response to "${userMessage}": Here's the explanation...` 
-        }]);
+        setMessages((prev) => [...prev, { role: "ai", content: aiReply }]);
+        setShowActionButtons(true);
+
+        const randomFeedback = Math.random() > 0.5 ? "correct" : "wrong";
+        setFeedback(randomFeedback);
         setIsLoading(false);
       }, 1000);
-      
-      // TODO: Replace setTimeout with actual API response:
-      // setMessages(prev => [...prev, { role: 'ai', content: data.response }]);
-      // setIsLoading(false);
-      
     } catch (error) {
-      // Handle API errors gracefully
-      console.error('Error sending message:', error);
+      console.error(error);
+      setMessages((prev) => [
+        ...prev,
+        { role: "ai", content: "❌ Error: Failed to get response." },
+      ]);
       setIsLoading(false);
-      
-      // TODO: Show error message to user
-      // setMessages(prev => [...prev, { 
-      //   role: 'ai', 
-      //   content: 'Sorry, something went wrong. Please try again.' 
-      // }]);
     }
   };
 
-  /**
-   * Handles Enter key press in input field
-   * @param e - Keyboard event
-   * Submit on Enter, allow Shift+Enter for new lines
-   */
+  // ==================== HANDLE NEW AI QUESTION ====================
+  const handleNewQuestion = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+    setShowActionButtons(false);
+    setFeedback(null);
+
+    try {
+      const newQuestion = `
+Here’s a new question for you:<br/><br/>
+Solve for x in the equation:<br/>
+$$
+2x^2 + 3x - 5 = 0
+$$
+`;
+      setTimeout(() => {
+        setMessages((prev) => [...prev, { role: "ai", content: newQuestion }]);
+        setIsLoading(false);
+      }, 800);
+    } catch (error) {
+      console.error(error);
+      setMessages((prev) => [
+        ...prev,
+        { role: "ai", content: "❌ Error: Failed to get new question." },
+      ]);
+      setIsLoading(false);
+    }
+  };
+
+  // ==================== HANDLE SHIFT SUBJECT ====================
+  const handleShiftSubject = () => {
+    // 清空对话记录，回到主题选择状态
+    setMessages([]);
+    setInput("");
+    setShowActionButtons(false);
+    setFeedback(null);
+    setShowSidebar(false);
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // Prevent default form submission
+      e.preventDefault();
       handleSend();
     }
   };
 
-  /**
-   * Fetches and displays detailed hint for a question
-   * @param questionContent - The original user question
-   */
-  const handleShowHint = async (questionContent: string) => {
-    try {
-      // TODO: Replace with actual backend API call
-      // Example API integration:
-      // const response = await fetch('/api/hint', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ question: questionContent })
-      // });
-      // const data = await response.json();
-      
-      // TEMPORARY: Simulated hint for development
-      setCurrentHint(`Detailed Explanation:\n\n"${questionContent}"\n\nThis is where the detailed explanation will appear...`);
-      
-      // TODO: Replace with actual API response:
-      // setCurrentHint(data.hint);
-      
-      // Show the sidebar with the hint
-      setShowSidebar(true);
-      
-    } catch (error) {
-      // Handle API errors gracefully
-      console.error('Error fetching hint:', error);
-      
-      // TODO: Show error message in sidebar
-    }
-  };
-
-  /**
-   * Handles user logout
-   * Clears authentication and redirects to signin
-   */
-  const handleLogout = () => {
-    // Clear authentication
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('username');
-    
-    // Redirect to signin
-    navigate('/signin');
-  };
-
-  // ==================== DERIVED STATE ====================
-  
-  /** Check if there are any messages to display conversation UI */
   const hasConversation = messages.length > 0;
 
+  // ==================== HANDLE HINT ====================
+  const handleShowHint = (questionContent: string) => {
+    setCurrentHint(`Detailed explanation for:\n\n"${questionContent}"\n\nThis is where the hint appears.`);
+    setShowSidebar(true);
+  };
+
   // ==================== RENDER ====================
-  
   return (
-  
-    <div style={{ 
-      width: "100vw",
-      height: "100vh",
-      display: "flex",
-      position: "relative",
-      backgroundColor: colors.white,
-    }}>
-      {/* ==================== MAIN CHAT AREA ==================== */}
-      <div style={{
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        transition: "all 0.3s ease",
-        // Adjust width when sidebar is open
-        width: showSidebar ? "calc(100% - 400px)" : "100%"
-      }}>
-        
-        {/* ==================== INITIAL STATE (No Conversation) ==================== */}
-        {!hasConversation && (
-          <div style={{
-            flex: "1",
+    
+    <MathJaxContext
+      config={{
+        loader: { load: ["input/tex", "output/chtml"] },
+        tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["$$", "$$"]] },
+      }}
+    >
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: colors.white,
+          position: "relative",
+        }}
+      >
+        {/* ==================== CHAT AREA ==================== */}
+        <div
+          style={{
+            flex: 1,
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "40px 20px"
-          }}>
-            {/* Main heading */}
-            <h1 style={{ 
-              fontSize: "36px", 
-              marginBottom: "20px",
-              color: colors.navy,
-              fontWeight: "600"
-            }}>
-              AI Learning Assistant
-            </h1>
-            
-            {/* Subtitle */}
-            <p style={{
-              fontSize: "18px",
-              color: colors.teal,
-              marginBottom: "50px"
-            }}>
-              Ask me anything!
-            </p>
-            
-            {/* Initial input container */}
-            <div style={{ 
-              width: "100%", 
-              maxWidth: "800px",
-              display: "flex", 
-              gap: "12px",
-              borderRadius: "12px",
-              padding: "8px",
-              backgroundColor: colors.white,
-              border: `2px solid ${colors.mint}`
-            }}>
-              {/* Input field */}
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="Enter your question..."
-                disabled={isLoading}
-                style={{
-                  flex: "1",
-                  padding: "16px 20px",
-                  borderRadius: "8px",
-                  border: "none",
-                  fontSize: "16px",
-                  outline: "none",
-                  backgroundColor: "transparent"
-                }}
-              />
-              
-              {/* Send button */}
-              <button
-                onClick={handleSend}
-                disabled={isLoading}
-                style={{
-                  padding: "12px 32px",
-                  borderRadius: "8px",
-                  border: "none",
-                  backgroundColor: isLoading ? colors.mint : colors.teal,
-                  color: colors.white,
-                  cursor: isLoading ? "not-allowed" : "pointer",
-                  fontSize: "16px",
-                  fontWeight: "600",
-                  whiteSpace: "nowrap",
-                  transition: "background-color 0.3s ease"
-                }}
-                onMouseEnter={(e) => !isLoading && (e.currentTarget.style.backgroundColor = colors.navy)}
-                onMouseLeave={(e) => !isLoading && (e.currentTarget.style.backgroundColor = colors.teal)}
-              >
-                {isLoading ? "Sending..." : "Send"}
-              </button>
-            </div>
-          </div>
-        )}
-    
-    {/* button routes from homepage to scoreboard*/}
-  
-  <div style={{ display: "flex", justifyContent: "center" }}>
-    <button
-    onClick={() => navigate("/Scoreboard")}
-   style={{
-      backgroundColor: colors.teal,
-      border: "2px solid white",
-      color: "white",
-      width: "500px",
-      padding: "10px 14px",
-      borderRadius: "8px",
-      fontSize: "1rem", 
-      cursor: "pointer",
-    }}
-  >
-    See your score and ranking here!
-  </button>
-  </div>
-
-    {/* ^^^ button routes from homepage to scoreboard*/}
-
-        {/* ==================== CONVERSATION STATE ==================== */}
-        {hasConversation && (
-          <>
-            {/* ==================== MESSAGES AREA ==================== */}
+            padding: "40px 20px",
+            overflowY: "auto",
+          }}
+        >
+          {!hasConversation && (
             <div
               style={{
-                flex: "1",
-                overflowY: "auto",
+                flex: 1,
                 display: "flex",
                 flexDirection: "column",
-                padding: "40px 20px"
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "40px 20px",
               }}
             >
-              {/* Loop through all messages */}
-              {messages.map((msg, idx) => {
-                // Check if this is the last AI message (to show hint button)
-                const isLastAiMessage = msg.role === 'ai' && 
-                  (idx === messages.length - 1 || messages[idx + 1]?.role === 'user');
-                
-                // Get the user's question for this AI response
-                const userQuestion = idx > 0 ? messages[idx - 1]?.content : '';
-                
-                return (
-                  <div key={idx}>
-                    {msg.role === "user" ? (
-                      /* ========== USER MESSAGE ========== */
+              <h1 style={{ fontSize: "36px", marginBottom: "20px", color: colors.navy, fontWeight: 600 }}>
+                Which topic do you want to learn?
+              </h1>
+              <p style={{ fontSize: "18px", color: colors.teal, marginBottom: "50px" }}>
+                Ask me anything!
+              </p>
+            </div>
+          )}
+
+          {messages.map((msg, idx) => {
+            const isLastAiMessage =
+              msg.role === "ai" && (idx === messages.length - 1 || messages[idx + 1]?.role === "user");
+            const userQuestion = idx > 0 ? messages[idx - 1]?.content : "";
+
+            return (
+              <div key={idx}>
+                {msg.role === "user" ? (
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      marginBottom: "24px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "100%",
+                        maxWidth: "900px",
+                        padding: "20px 40px",
+                        borderRadius: "16px",
+                        backgroundColor: colors.mint,
+                        color: colors.navy,
+                        fontSize: "18px",
+                        textAlign: "center",
+                        fontWeight: "500",
+                      }}
+                    >
+                      {msg.content}
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        marginBottom: "16px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "100%",
+                          maxWidth: "900px",
+                          padding: "24px 40px",
+                          borderRadius: "16px",
+                          backgroundColor: colors.ltbu,
+                          color: colors.navy,
+                          fontSize: "16px",
+                          lineHeight: "1.8",
+                          textAlign: "left",
+                        }}
+                      >
+                        <MathJax dynamic>
+                          <div dangerouslySetInnerHTML={{ __html: msg.content }} />
+                        </MathJax>
+                      </div>
+                    </div>
+
+                    {isLastAiMessage && (
                       <div
                         style={{
                           width: "100%",
@@ -357,248 +255,192 @@ export default function Homepage() {
                           marginBottom: "24px",
                         }}
                       >
-                        <div
+                        <button
+                          onClick={() => handleShowHint(userQuestion)}
                           style={{
-                            width: "100%",
-                            maxWidth: "900px",
-                            padding: "20px 40px",
-                            borderRadius: "16px",
-                            backgroundColor: colors.mint,
-                            color: colors.navy,
-                            fontSize: "18px",
-                            lineHeight: "1.6",
-                            textAlign: "center",
-                            fontWeight: "500",
+                            padding: "10px 24px",
+                            borderRadius: "8px",
+                            border: `2px solid ${colors.ltgr}`,
+                            backgroundColor: colors.white,
+                            color: colors.ltgr,
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            fontWeight: "600",
+                            transition: "all 0.3s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = colors.ltgr;
+                            e.currentTarget.style.color = colors.white;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = colors.white;
+                            e.currentTarget.style.color = colors.ltgr;
                           }}
                         >
-                          {msg.content}
-                        </div>
-                      </div>
-                    ) : (
-                      /* ========== AI MESSAGE WITH HINT BUTTON ========== */
-                      <div>
-                        {/* AI response bubble */}
-                        <div
-                          style={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                            marginBottom: "16px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              width: "100%",
-                              maxWidth: "900px",
-                              padding: "24px 40px",
-                              borderRadius: "16px",
-                              backgroundColor: colors.ltbu,
-                              color: colors.navy,
-                              fontSize: "16px",
-                              lineHeight: "1.8",
-                              textAlign: "left",
-                            }}
-                          >
-                            {msg.content}
-                          </div>
-                        </div>
-                        
-                        {/* Show hint button only for the most recent AI message */}
-                        {isLastAiMessage && (
-                          <div style={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                            marginBottom: "24px"
-                          }}>
-                            <button
-                              onClick={() => handleShowHint(userQuestion)}
-                              style={{
-                                padding: "10px 24px",
-                                borderRadius: "8px",
-                                border: `2px solid ${colors.ltgr}`,
-                                backgroundColor: colors.white,
-                                color: colors.ltgr,
-                                cursor: "pointer",
-                                fontSize: "14px",
-                                fontWeight: "600",
-                                transition: "all 0.3s ease"
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = colors.ltgr;
-                                e.currentTarget.style.color = colors.white;
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor = colors.white;
-                                e.currentTarget.style.color = colors.ltgr;
-                              }}
-                            >
-                              View Hint
-                            </button>
-                          </div>
-                        )}
+                          View Hint
+                        </button>
                       </div>
                     )}
                   </div>
-                );
-              })}
-              
-              {/* ========== LOADING INDICATOR ========== */}
-              {isLoading && (
-                <div style={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center",
-                  marginBottom: "24px"
-                }}>
-                  <div style={{
-                    padding: "20px",
-                    color: colors.teal,
-                    fontSize: "16px"
-                  }}>
-                    Thinking...
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* ==================== INPUT AREA (Bottom) ==================== */}
-            <div style={{
-              padding: "20px",
-              borderTop: `2px solid ${colors.mint}`,
-              backgroundColor: colors.white
-            }}>
-              <div style={{
-                width: "100%",
-                maxWidth: "900px",
-                margin: "0 auto",
-                display: "flex",
-                gap: "12px"
-              }}>
-                {/* Input field for follow-up questions */}
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  placeholder="Ask another question..."
-                  disabled={isLoading}
-                  style={{
-                    flex: "1",
-                    padding: "14px 20px",
-                    borderRadius: "12px",
-                    border: `2px solid ${colors.mint}`,
-                    fontSize: "16px",
-                    outline: "none",
-                    transition: "border-color 0.3s ease"
-                  }}
-                  onFocus={(e) => e.currentTarget.style.borderColor = colors.teal}
-                  onBlur={(e) => e.currentTarget.style.borderColor = colors.mint}
-                />
-                
-                {/* Send button */}
-                <button
-                  onClick={handleSend}
-                  disabled={isLoading}
-                  style={{
-                    padding: "14px 32px",
-                    borderRadius: "12px",
-                    border: "none",
-                    backgroundColor: isLoading ? colors.mint : colors.teal,
-                    color: colors.white,
-                    cursor: isLoading ? "not-allowed" : "pointer",
-                    fontSize: "16px",
-                    fontWeight: "600",
-                    whiteSpace: "nowrap",
-                    transition: "background-color 0.3s ease"
-                  }}
-                  onMouseEnter={(e) => !isLoading && (e.currentTarget.style.backgroundColor = colors.navy)}
-                  onMouseLeave={(e) => !isLoading && (e.currentTarget.style.backgroundColor = colors.teal)}
-                >
-                  {isLoading ? "Sending..." : "Send"}
-                </button>
+                )}
               </div>
-            </div>
-          </>
-        )}
-      </div>
+            );
+          })}
 
-      {/* ==================== HINT SIDEBAR ==================== */}
-      {showSidebar && (
-        <div style={{
-          width: "400px",
-          height: "100vh",
-          backgroundColor: colors.white,
-          borderLeft: `3px solid ${colors.mint}`,
-          display: "flex",
-          flexDirection: "column",
-          position: "fixed",
-          right: 0,
-          top: 0,
-          animation: "slideIn 0.3s ease-out",
-          boxShadow: "-4px 0 12px rgba(0,0,0,0.1)"
-        }}>
-          {/* ========== SIDEBAR HEADER ========== */}
-          <div style={{
-            padding: "24px",
-            borderBottom: `2px solid ${colors.mint}`,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            backgroundColor: colors.ltbu
-          }}>
-            {/* Title */}
-            <h2 style={{
-              fontSize: "20px",
-              color: colors.navy,
-              fontWeight: "600",
-              margin: 0
-            }}>
-              Detailed Explanation
-            </h2>
-            
-            {/* Close button */}
-            <button
-              onClick={() => setShowSidebar(false)}
+          {isLoading && (
+            <div style={{ textAlign: "center", color: colors.teal, marginTop: "20px" }}>Thinking...</div>
+          )}
+
+          {feedback && (
+            <div
               style={{
-                padding: "8px 16px",
-                borderRadius: "8px",
-                border: "none",
-                backgroundColor: colors.ltgr,
-                color: colors.white,
-                cursor: "pointer",
-                fontSize: "14px",
-                fontWeight: "600",
-                transition: "background-color 0.3s ease"
+                textAlign: "center",
+                color: feedback === "correct" ? "green" : "red",
+                fontSize: "18px",
+                marginTop: "12px",
               }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.navy}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.ltgr}
             >
-              Close
+              {feedback === "correct" ? "🎉 Congratulation!" : "❌ Wrong answer!"}
+            </div>
+          )}
+        </div>
+
+        {/* ==================== INPUT AREA ==================== */}
+        <div
+          style={{
+            padding: "20px",
+            borderTop: `2px solid ${colors.mint}`,
+            backgroundColor: colors.white,
+          }}
+        >
+          <div style={{ width: "100%", maxWidth: "900px", margin: "0 auto", display: "flex", gap: "12px" }}>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="Enter your question..."
+              disabled={isLoading}
+              style={{
+                flex: 1,
+                padding: "14px 20px",
+                borderRadius: "12px",
+                border: `2px solid ${colors.mint}`,
+                fontSize: "16px",
+                outline: "none",
+              }}
+            />
+            <button
+              onClick={handleSend}
+              disabled={isLoading}
+              style={{
+                padding: "14px 32px",
+                borderRadius: "12px",
+                border: "none",
+                backgroundColor: isLoading ? colors.mint : colors.teal,
+                color: colors.white,
+                cursor: isLoading ? "not-allowed" : "pointer",
+                fontSize: "16px",
+                fontWeight: "600",
+              }}
+            >
+              {isLoading ? "Sending..." : "Send"}
             </button>
           </div>
 
-          {/* ========== SIDEBAR CONTENT ========== */}
-          <div style={{
-            flex: 1,
-            padding: "24px",
-            overflowY: "auto",
-            color: colors.navy,
-            fontSize: "15px",
-            lineHeight: "1.8"
-          }}>
-            {/* Display hint content with preserved line breaks */}
-            <div style={{
-              whiteSpace: "pre-line"
-            }}>
-              {currentHint}
+          {/* Action Buttons */}
+          {showActionButtons && (
+            <div style={{ display: "flex", justifyContent: "center", gap: "16px", marginTop: "20px" }}>
+              <button
+                onClick={handleNewQuestion}
+                style={{
+                  padding: "10px 24px",
+                  borderRadius: "12px",
+                  border: "none",
+                  backgroundColor: colors.teal,
+                  color: colors.white,
+                  cursor: "pointer",
+                  fontWeight: 600,
+                }}
+              >
+                One more question
+              </button>
+                <button onClick={() => navigate("/Scoreboard")} style={{ backgroundColor: colors.teal, border: "2px solid white", color: "white", width: "500px", padding: "10px 14px", borderRadius: "8px", fontSize: "1rem", cursor: "pointer", }} > See your score and ranking here! </button>
+              <button
+                onClick={handleShiftSubject}
+                style={{
+                  padding: "10px 24px",
+                  borderRadius: "12px",
+                  border: "none",
+                  backgroundColor: colors.mint,
+                  color: colors.navy,
+                  cursor: "pointer",
+                  fontWeight: 600,
+                }}
+              >
+                Shift Subject
+              </button>
+            </div>
+          )}
+        </div>
+          
+        {/* ==================== HINT SIDEBAR ==================== */}
+        {showSidebar && (
+          <div
+            style={{
+              width: "400px",
+              height: "100vh",
+              backgroundColor: colors.white,
+              borderLeft: `3px solid ${colors.mint}`,
+              display: "flex",
+              flexDirection: "column",
+              position: "fixed",
+              right: 0,
+              top: 0,
+              boxShadow: "-4px 0 12px rgba(0,0,0,0.1)",
+            }}
+          >
+            <div
+              style={{
+                padding: "24px",
+                borderBottom: `2px solid ${colors.mint}`,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                backgroundColor: colors.ltbu,
+              }}
+            >
+              <h2 style={{ fontSize: "20px", color: colors.navy, fontWeight: "600", margin: 0 }}>
+                Detailed Explanation
+              </h2>
+              <button
+                onClick={() => setShowSidebar(false)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  border: "none",
+                  backgroundColor: colors.ltgr,
+                  color: colors.white,
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                }}
+              >
+                Close
+              </button>
+            </div>
+            <div style={{ flex: 1, padding: "24px", overflowY: "auto", color: colors.navy, fontSize: "15px", lineHeight: "1.8" }}>
+              <div style={{ whiteSpace: "pre-line" }}>{currentHint}</div>
+              
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* ==================== ANIMATIONS ==================== */}
-     
-    </div>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+  
+</div>
+    </MathJaxContext>
+    
   );
 }
