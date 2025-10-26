@@ -1,6 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 export default function UserScores() {
+  const navigate = useNavigate();
 
   const [users, setUsers] = useState
   ([ { name: "Alice", score: 0 },
@@ -44,8 +47,8 @@ export default function UserScores() {
 
 //I LOVE COLORS
   const colors = {
-    coral: "#DE807B",
-    blush: "#EAB7A9",
+    ltgr: "#a2d3d7ff",
+    ltbu: "#c5d7edff",
     mint: "#B7D6CC",
     teal: "#4C96A8",
     navy: "#2C3E58",
@@ -66,7 +69,7 @@ export default function UserScores() {
         alignItems: "center", // centers horizontally
         minHeight: "100vh", // height of viewport (viewport = visible area of webpage!)
         width: "100vw", // width of viewport
-        backgroundColor: colors.mint,
+        backgroundColor: colors.white,
         fontFamily: "'Poppins', sans-serif", // clean and yet pretty
         color: colors.navy,
         padding: "2rem", // spacing around edges
@@ -76,6 +79,8 @@ export default function UserScores() {
       <h2 style={{ marginBottom: "1rem", color: colors.navy }}>
         🏆 Scoreboard 🏆
       </h2>
+
+
 
       {/* INPUTS */}
       {/* specifically: username input box and add user button */}
@@ -102,7 +107,7 @@ export default function UserScores() {
             padding: "0.5rem 1rem",
             borderRadius: "8px",
             border: "none",
-            backgroundColor: colors.coral,
+            backgroundColor: colors.ltbu,
             color: "white",
 
             cursor: "pointer", //Makes clickable!
@@ -131,7 +136,7 @@ export default function UserScores() {
             //boxShadow: "0 3px 8px rgba(0,0,0,0.15)",
 
 
-            border: `3px solid ${colors.navy}`,// highlight border
+            border: `1px solid ${colors.navy}`,// highlight border
 
 
             margin: "0 auto",
@@ -160,10 +165,10 @@ export default function UserScores() {
           // Assigns banner color based on rank
           const bannerColor =
             index === 0
-              ? colors.coral
-              : index === 1 // #1 = coral
-              ? colors.blush
-              : index === 2 // #2 = blush
+              ? colors.ltbu
+              : index === 1 // #1 = lightblue
+              ? colors.ltgr
+              : index === 2 // #2 = lightgreen
               ? colors.mint //#3 = mint
               : colors.white; // everyone else = white
 
@@ -181,7 +186,7 @@ export default function UserScores() {
                 backgroundColor: bannerColor,
                 borderRadius: "14px",
                 padding: "1rem 2rem",
-                border: `3px solid ${colors.navy}`,
+                border: `1px solid ${colors.navy}`,
               }}
             >
               {/* Rank number */}
@@ -222,7 +227,7 @@ export default function UserScores() {
                   borderRadius: "8px",
                   backgroundColor: colors.teal,
                   color: "white",
-                  border: "none",
+                  border: `1px solid ${colors.navy}`,
                   cursor: "pointer",
                   fontWeight: "bold",
                 }}
@@ -233,6 +238,30 @@ export default function UserScores() {
           );
         })}
       </div>
+  
+      
+
+    {/* button routes from SCOREBOARD to HOMEPAGE*/}
+    <div>
+      <button 
+        onClick={() => navigate("/home")}
+        style={{
+          backgroundColor: colors.teal,
+          border: "2px solid white",
+          color: "white",
+
+          padding: "10px 20px",
+          borderRadius: "8px",
+          fontSize: "1rem",
+          cursor: "pointer",
+          marginBottom: "1rem",
+        }}
+
+        > Homepage
+        
+      </button>
+    </div>
+    {/* ^^^ button routes from SCOREBOARD to HOMEPAGE*/}
 
       {/* Reset button, CAN ALSO DELETE once connected with backend */}
       <button
@@ -242,7 +271,7 @@ export default function UserScores() {
           padding: "0.5rem 1.5rem",
           borderRadius: "8px",
           border: "none",
-          backgroundColor: colors.coral,
+          backgroundColor: colors.ltbu,
           color: "white",
           cursor: "pointer",
           fontWeight: "bold",
