@@ -245,6 +245,7 @@ $$
                       lineHeight: "1.8",
                       textAlign: "center",
                       marginBottom: "16px",
+                      boxShadow: "-4px 0 12px rgba(0,0,0,0.1)",
                     }}
                   >
                     {msg.content}
@@ -263,6 +264,7 @@ $$
                         lineHeight: "1.8",
                         textAlign: "center",
                         marginBottom: "16px",
+                        boxShadow: "-4px 0 12px rgba(0,0,0,0.1)",
                       }}
                     >
                       <MathJax dynamic>
@@ -321,6 +323,7 @@ $$
                 textAlign: "center",
                 color: feedback === "correct" ? "green" : "red",
                 fontSize: "18px",
+                fontWeight: "600",
                 marginTop: "12px",
               }}
             >
@@ -437,7 +440,7 @@ $$
                 backgroundColor: colors.ltbu,
               }}
             >
-              <h2 style={{ fontSize: "20px", color: colors.navy, fontWeight: "600", margin: 0 }}>
+              <h2 style={{ fontSize: "16px", color: colors.navy, fontWeight: "600", margin: 0 }}>
                 Detailed Explanation
               </h2>
               <button
@@ -449,14 +452,14 @@ $$
                   backgroundColor: colors.ltgr,
                   color: colors.white,
                   cursor: "pointer",
-                  fontSize: "14px",
+                  fontSize: "16px",
                   fontWeight: "600",
                 }}
               >
                 Close
               </button>
             </div>
-            <div style={{ flex: 1, padding: "24px", overflowY: "auto", color: colors.navy, fontSize: "15px", lineHeight: "1.8" }}>
+            <div style={{ flex: 1, padding: "24px", overflowY: "auto", color: colors.navy, fontSize: "16px", lineHeight: "1.8" }}>
               <div style={{ whiteSpace: "pre-line" }}>{currentHint}</div>
             </div>
           </div>
