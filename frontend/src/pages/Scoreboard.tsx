@@ -96,7 +96,7 @@ export default function UserScores() {
           // so that only name is shown on leader board, not ID
           placeholder="Enter username"
 
-          // value={newUser} // controlled component = value is tied to state = we can reset it after adding user
+          value={newUser} // controlled component = value is tied to state = we can reset it after adding user
           onChange={(e) => setNewUser(e.target.value)} // updates state as user types
           onKeyDown={(e) => e.key === 'Enter' && addUser()} // ALLOWS ADD W/ ENTER KEY
           style={{
@@ -137,8 +137,9 @@ export default function UserScores() {
             color: "white",
             borderRadius: "14px",
             padding: "1rem 2rem",
-            width: "60%",
+            width: "80%",
             fontWeight: "bold",
+            gap: "1rem", // adds space between items
             fontSize: "1.1rem",
             //boxShadow: "0 3px 8px rgba(0,0,0,0.15)",
 
@@ -158,7 +159,7 @@ export default function UserScores() {
       <div
         style={{
           flex: 1, // helps with empty vert space
-          width: "60%",
+          width: "80%",
           overflowY: "auto",
            //^^^ allows for scroll if too many users
           display: "flex", // Stacks the banners!
@@ -188,12 +189,14 @@ export default function UserScores() {
             <div
               key={user.name}
               style={{
+
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 backgroundColor: bannerColor,
                 borderRadius: "14px",
                 padding: "1rem 2rem",
+                gap: "1rem", // adds space between items
                 border: `1px solid ${colors.navy}`,
               }}
             >
@@ -226,8 +229,8 @@ export default function UserScores() {
                 }}
               >
                 {user.score}
-              {/* THIS BUTTON INCREASES SCORE, we can delete this later and rewrite when we connect to backend */}
               </div>
+              {/* THIS BUTTON INCREASES SCORE, we can delete this later and rewrite when we connect to backend */}
               <button
                 onClick={() => increaseScore(users.findIndex((u) => u.name === user.name)) }
                 style={{
