@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -30,11 +31,16 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "username invalid", http.StatusBadRequest)
 		return
 	}
+	grade := vars["grade"]
+	if strconv.Atoi(grade) < 0 || strconv.Atoi(grade) > 12 {
+		http.Error(w, "username invalid", http.StatusBadRequest)
+		return
+	}
 	pwd := vars["pwd"]
 	h := sha256.Sum256([]byte(pwd))
 	hashed := hex.EncodeToString(h[:])
 
-	res, err := a.DB.ExecContext(ctx, "INSERT INTO users (username, score, questionsAnswered) VALUES (?, 100, 0)", username)
+	res, err := a.DB.ExecContext(ctx, "INSERT INTO users (Username, Score, grade, questionsAnswered) VALUES (?, NULL, ?, 0)", username, grade)
 	if err != nil {
 		log.Printf("signup insert user error: %v", err)
 		http.Error(w, "failed to create user", http.StatusInternalServerError)
@@ -52,7 +58,7 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 		uid = id
 	}
 
-	_, err = a.DB.ExecContext(ctx, "INSERT INTO auth (userID, hashPW) VALUES (?, ?)", uid, hashed)
+	_, err = a.DB.ExecContext(ctx, "INSERT INTO auth (userID, Hash) VALUES (?, ?)", uid, hashed)
 	if err != nil {
 		log.Printf("signup insert auth error: %v", err)
 		http.Error(w, "failed to create auth record", http.StatusInternalServerError)
