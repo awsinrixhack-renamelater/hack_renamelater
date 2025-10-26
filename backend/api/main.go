@@ -30,6 +30,8 @@ func main() {
 	})
 	router.HandleFunc("/signup/{username}/{pwd}/{grade}", app.Signup)
 	router.HandleFunc("/login/{username}/{pwd}", app.Login)
+	router.HandleFunc("/addfriend", app.addFriend)
+	router.HandleFunc("/getallfriends/{user}", app.getAllFriends)
 
 	protected := router.PathPrefix("/").Subrouter()
 	protected.Use(app.Auth)

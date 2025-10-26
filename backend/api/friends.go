@@ -10,8 +10,8 @@ import (
 )
 
 type friend struct {
-	username string
-	score    int
+	Username string `json:"username"`
+	Score    int    `json:"score"`
 }
 
 // adds a friendship to the friends DB
@@ -33,7 +33,7 @@ func (a *App) addFriend(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Invalid user IDs"))
 		return
 	}
-	_, err := a.DB.ExecContext(r.Context(), "INSERT INTO friends (ID1, ID2) VALUES (?, ?, ?, ?)", user1, user2, user2, user1)
+	_, err := a.DB.ExecContext(r.Context(), "INSERT INTO friends (ID1, ID2) VALUES (?, ?), (?, ?)", user1, user2, user2, user1)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Sprintf("Error updating DB: %v", err)))
@@ -75,7 +75,7 @@ func (a *App) getAllFriends(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(fmt.Sprintf("Error scanning SQL row: %v", err)))
 			return
 		}
-		friendList = append(friendList, friend{username: username, score: score})
+		friendList = append(friendList, friend{Username: username, Score: score})
 	}
 
 	jsonData, err := json.Marshal(friendList)
@@ -85,7 +85,7 @@ func (a *App) getAllFriends(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(jsonData))
-
-
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintln(w, string(jsonData))
+	// w.Write(jsonData)
 }
