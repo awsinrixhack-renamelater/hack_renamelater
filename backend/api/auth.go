@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/gorilla/mux"
+	// "github.com/gorilla/mux"
 )
 
 type contextKey string
@@ -23,15 +23,20 @@ type contextKey string
 const claimsKey contextKey = "claims"
 
 func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
+	var req AccReq
 	ctx := r.Context()
-	vars := mux.Vars(r)
-	username := vars["username"]
-	if len(username) == 0 || len(username) > 20 {
+	// vars := mux.Vars(r)
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+	// username := vars["username"]
+	if len(req.Username) == 0 || len(req.Username) > 20 {
 		http.Error(w, "username invalid", http.StatusBadRequest)
 		return
 	}
-	grade := vars["grade"]
-	gradeInt, err := strconv.Atoi(grade)
+	// grade := vars["grade"]
+	gradeInt, err := strconv.Atoi(req.Grade)
 	if err != nil {
 		http.Error(w, "atoi failure", http.StatusInternalServerError)
 		return
@@ -40,11 +45,11 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "grade out of bounds", http.StatusBadRequest)
 		return
 	}
-	pwd := vars["pwd"]
-	h := sha256.Sum256([]byte(pwd))
+	// pwd := vars["pwd"]
+	h := sha256.Sum256([]byte(req.Pwd))
 	hashed := hex.EncodeToString(h[:])
 
-	res, err := a.DB.ExecContext(ctx, "INSERT INTO users (Username, Score, grade, questionsAnswered) VALUES (?, NULL, ?, 0)", username, grade)
+	res, err := a.DB.ExecContext(ctx, "INSERT INTO users (Username, Score, grade, questionsAnswered) VALUES (?, NULL, ?, 0)", req.Username, req.Grade)
 	if err != nil {
 		log.Printf("signup insert user error: %v", err)
 		http.Error(w, "failed to create user", http.StatusInternalServerError)
@@ -53,7 +58,7 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 	uid, err := res.LastInsertId()
 	if err != nil {
 		var id int64
-		err2 := a.DB.QueryRowContext(ctx, "SELECT ID FROM users WHERE username=? LIMIT 1", username).Scan(&id)
+		err2 := a.DB.QueryRowContext(ctx, "SELECT ID FROM users WHERE username=? LIMIT 1", req.Username).Scan(&id)
 		if err2 != nil {
 			log.Printf("signup get id error: %v, %v", err, err2)
 			http.Error(w, "failed to create user", http.StatusInternalServerError)
@@ -74,15 +79,16 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) Login(w http.ResponseWriter, r *http.Request) {
+	var req AccReq
 	ctx := r.Context()
-	vars := mux.Vars(r)
-	username := vars["username"]
-	pwd := vars["pwd"]
+	// vars := mux.Vars(r)
+	// username := vars["username"]
+	// pwd := vars["pwd"]
 	h := sha256.New()
-	h.Write([]byte(pwd))
+	h.Write([]byte(req.Pwd))
 	hashed := hex.EncodeToString(h.Sum(nil))
 	var id int64
-	err := a.DB.QueryRowContext(ctx, "SELECT ID FROM users WHERE username=? LIMIT 1", username).Scan(&id)
+	err := a.DB.QueryRowContext(ctx, "SELECT ID FROM users WHERE username=? LIMIT 1", req.Username).Scan(&id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "invalid credentials", http.StatusUnauthorized)
