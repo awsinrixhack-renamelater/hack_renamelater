@@ -37,7 +37,6 @@ func main() {
 		fmt.Fprint(w, "Testing DB")
 		testDB(app, ctx)
 	})
-	// Register /gen route and call Gen with the request context and handler args
 	protected.HandleFunc("/gen", func(w http.ResponseWriter, r *http.Request) {
 		Gen(ctx, w, r)
 	})
