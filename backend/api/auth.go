@@ -22,13 +22,6 @@ type contextKey string
 
 const claimsKey contextKey = "claims"
 
-type AccReq struct {
-	Username string `json:"username"`
-	Pwd string `json:"pwd"`
-	Grade string `json:"grade"`
-}
-
-
 func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 	var req AccReq
 	ctx := r.Context()

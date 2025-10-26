@@ -14,6 +14,9 @@ export default function SignIn() {
   
   // ==================== STATE MANAGEMENT ====================
   
+  /** Grade input value */
+  const [grade, setGrade] = useState("");
+
   /** Username input value */
   const [username, setUsername] = useState("");
   
@@ -42,8 +45,8 @@ export default function SignIn() {
   
   /** Centralized color palette matching the main app */
   const colors = {
-    coral: "#DE807B",
-    blush: "#EAB7A9",
+    ltgr: "#a2d3d7ff",     // coral: Accent color for hints
+    ltbu: "#c5d7edff",      // blush: AI message background
     mint: "#B7D6CC",
     teal: "#4C96A8",
     navy: "#2C3E58",
@@ -144,31 +147,6 @@ export default function SignIn() {
   };
 
   /**
-   * Handles forgot password flow
-   */
-  const handleForgotPassword = async () => {
-    if (!username) {
-      setError("Please enter your username first");
-      return;
-    }
-
-    try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/forgot-password', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ username: username })
-      // });
-      
-      alert(`Password reset link sent for username: ${username}`);
-      
-    } catch (err) {
-      setError("Failed to send reset link");
-      console.error('Forgot password error:', err);
-    }
-  };
-
-  /**
    * Toggles between login and sign up modes
    */
   const toggleMode = () => {
@@ -217,7 +195,7 @@ export default function SignIn() {
             fontSize: "28px",
             fontWeight: "600"
           }}>
-            {isSignUp ? "Sign Up" : "Sign In"}
+            {isSignUp ? "Sign Up" : "Login"}
           </h1>
         </div>
 
@@ -276,6 +254,7 @@ export default function SignIn() {
             onBlur={(e) => e.currentTarget.style.borderColor = colors.mint}
           />
         </div>
+
 
         {/* Password input */}
         <div style={{ marginBottom: isSignUp ? "20px" : "12px" }}>
@@ -346,53 +325,27 @@ export default function SignIn() {
             />
           </div>
         )}
-
-        {/* Remember me & Forgot password (only for login) */}
-        {!isSignUp && (
-          <div style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "24px"
-          }}>
-            {/* Remember me checkbox */}
-            <label style={{
-              display: "flex",
-              alignItems: "center",
-              cursor: "pointer",
-              fontSize: "14px",
-              color: colors.navy
-            }}>
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                style={{
-                  marginRight: "8px",
-                  cursor: "pointer"
-                }}
-              />
-              Remember me
-            </label>
-
-            {/* Forgot password link */}
-            <button
-              type="button"
-              onClick={handleForgotPassword}
+        {isSignUp && (
+          <div style={{ marginBottom: "12px" }}>
+            <input
+             // type={showPassword ? "text" : "password"}
+              placeholder="Grade"
+              value={grade}
+              onChange={(e) => setGrade(e.target.value)}
+              onKeyDown={handleKeyPress}
               style={{
-                background: "none",
-                border: "none",
-                color: colors.teal,
-                fontSize: "14px",
-                cursor: "pointer",
-                fontWeight: "500",
-                textDecoration: "none"
+                width: "100%",
+                padding: "12px 16px",
+                borderRadius: "8px",
+                border: `2px solid ${colors.mint}`,
+                boxSizing: "border-box",
+                fontSize: "15px",
+                outline: "none",
+                transition: "border-color 0.3s ease"
               }}
-              onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"}
-              onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}
-            >
-              Forgot password?
-            </button>
+              onFocus={(e) => e.currentTarget.style.borderColor = colors.teal}
+              onBlur={(e) => e.currentTarget.style.borderColor = colors.mint}
+            />
           </div>
         )}
 
