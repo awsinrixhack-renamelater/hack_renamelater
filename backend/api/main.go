@@ -14,9 +14,29 @@ type App struct {
 	DB *sql.DB
 }
 
+// func corsMiddleware(next http.Handler) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+// 		w.Header().Set("Access-Control-Allow-Credentials", "true")
+// 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+// 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+// 		if r.Method == "OPTIONS" {
+// 			w.WriteHeader(http.StatusOK)
+// 			return
+// 		}
+
+// 		next.ServeHTTP(w, r)
+// 	})
+// }
+
 func main() {
 	ctx := context.Background()
+<<<<<<< HEAD
 	mux := http.NewServeMux()
+=======
+	router := mux.NewRouter()
+	// router.Use(corsMiddleware)
+>>>>>>> 3e04313902203bdb87e7d10befb10ff031a97b3d
 	fmt.Printf("started backend api")
 
 	db, err := InitDB(ctx)

@@ -1,52 +1,43 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-/**
- * SignIn Component - User authentication page
- * Features: Login, Sign up toggle, Remember me, Forgot password
- * Test Account: testuser / password123
- */
 export default function SignIn() {
   // ==================== ROUTER ====================
-  
+
   /** Navigation hook for redirecting after successful login */
   const navigate = useNavigate();
-  
+
   // ==================== STATE MANAGEMENT ====================
-  
+
   /** Grade input value */
   const [grade, setGrade] = useState("");
 
   /** Username input value */
   const [username, setUsername] = useState("");
-  
+
   /** Password input value */
   const [password, setPassword] = useState("");
-  
+
   /** Confirm password for sign up mode */
   const [confirmPassword, setConfirmPassword] = useState("");
-  
+
   /** Toggle between login and sign up modes */
   const [isSignUp, setIsSignUp] = useState(false);
-  
-  /** Remember me checkbox state */
-  const [rememberMe, setRememberMe] = useState(false);
-  
+
   /** Show/hide password */
   const [showPassword, setShowPassword] = useState(false);
-  
+
   /** Loading state for API calls */
   const [isLoading, setIsLoading] = useState(false);
-  
+
   /** Error message display */
   const [error, setError] = useState("");
 
   // ==================== COLOR THEME ====================
-  
-  /** Centralized color palette matching the main app */
+
   const colors = {
-    ltgr: "#a2d3d7ff",     // coral: Accent color for hints
-    ltbu: "#c5d7edff",      // blush: AI message background
+    ltgr: "#a2d3d7ff",
+    ltbu: "#c5d7edff",
     mint: "#B7D6CC",
     teal: "#4C96A8",
     navy: "#2C3E58",
@@ -56,22 +47,21 @@ export default function SignIn() {
   };
 
   // ==================== VALIDATION ====================
-  
+
   /**
    * Validates password strength
    * @param pass - Password to validate
-   * @returns boolean - true if password meets requirements
+   * @returns boolean - true if password is greater than 8 characters long
    */
   const isValidPassword = (pass: string): boolean => {
-    // At least 8 characters
-    return pass.length >= 8;
+    return pass.length >= 5; //change this first 
   };
 
   // ==================== EVENT HANDLERS ====================
-  
+
   /**
    * Handles form submission for both login and sign up
-   * TEST CREDENTIALS:
+   * test
    * Username: testuser
    * Password: password123
    */
@@ -85,7 +75,7 @@ export default function SignIn() {
     }
 
     if (!isValidPassword(password)) {
-      setError("Password must be at least 8 characters");
+      setError("Password must be at least 5 characters");
       return;
     }
 
@@ -97,52 +87,48 @@ export default function SignIn() {
     setIsLoading(true);
 
     try {
-      // TODO: Replace with actual API call
-      // const endpoint = isSignUp ? '/api/signup' : '/api/login';
-      // const response = await fetch(endpoint, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     username: username,
-      //     password: password,
-      //     rememberMe: rememberMe
-      //   })
-      // });
-      // const data = await response.json();
-      // if (data.success) {
-      //   localStorage.setItem('authToken', data.token);
-      //   navigate('/home');
-      // }
-      
-      // TEMPORARY: Test authentication (FOR DEVELOPMENT ONLY)
-      setTimeout(() => {
-        // Test credentials check
-        if (username === "testuser" && password === "password123") {
-          console.log('✅ Login successful!');
-          
-          // Store auth token (simulated)
-          localStorage.setItem('authToken', 'test-token-12345');
-          localStorage.setItem('username', username);
-          
-          // Redirect to homepage
-          navigate('/home');
-        } else if (isSignUp) {
-          // Allow any sign up for testing
-          console.log('✅ Sign up successful!');
-          localStorage.setItem('authToken', 'new-user-token');
-          localStorage.setItem('username', username);
-          navigate('/home');
-        } else {
-          // Invalid credentials
-          setError("Invalid username or password. Try: testuser / password123");
-          setIsLoading(false);
-        }
-      }, 1000);
+      setIsLoading(true);
 
+      const endpoint = isSignUp
+        ? "http://go-api-env.eba-tm4z5dgu.us-east-1.elasticbeanstalk.com/signup"
+        : "http://go-api-env.eba-tm4z5dgu.us-east-1.elasticbeanstalk.com/login";
+
+      const body = isSignUp
+        ? { username, pwd: password, grade }
+        : { username, pwd: password };
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        // mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          //  "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Server error: ${res.status} - ${text}`);
+      }
+
+      // If logging in, parse JWT token and store
+      if (!isSignUp) {
+        const data = await res.json();
+        localStorage.setItem("authToken", data.token);
+        console.log("✅ Login successful!");
+
+        navigate("/home");
+      } else {
+        const data = await res.json();
+        localStorage.setItem("authToken", data.token);
+        console.log("✅ Signup successful!");
+      }
     } catch (err) {
+      console.error("Auth error:", err);
       setError("Something went wrong. Please try again.");
+    } finally {
       setIsLoading(false);
-      console.error('Auth error:', err);
     }
   };
 
@@ -180,7 +166,7 @@ export default function SignIn() {
       <div
         style={{
           width: "500px",
-  
+
           padding: "40px",
           borderRadius: "16px",
           backgroundColor: colors.white,
@@ -189,7 +175,7 @@ export default function SignIn() {
       >
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
-          <h1 style={{ 
+          <h1 style={{
             margin: "0",
             color: colors.navy,
             fontSize: "28px",
@@ -328,7 +314,7 @@ export default function SignIn() {
         {isSignUp && (
           <div style={{ marginBottom: "12px" }}>
             <input
-             // type={showPassword ? "text" : "password"}
+              // type={showPassword ? "text" : "password"}
               placeholder="Grade"
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
@@ -350,7 +336,7 @@ export default function SignIn() {
         )}
 
         {/* Submit button */}
-        <button 
+        <button
           type="button"
           onClick={handleSubmit}
           disabled={isLoading}
@@ -370,8 +356,8 @@ export default function SignIn() {
           onMouseEnter={(e) => !isLoading && (e.currentTarget.style.backgroundColor = colors.navy)}
           onMouseLeave={(e) => !isLoading && (e.currentTarget.style.backgroundColor = colors.teal)}
         >
-          {isLoading 
-            ? "Processing..." 
+          {isLoading
+            ? "Processing..."
             : isSignUp ? "Sign Up" : "Sign In"}
         </button>
 
@@ -390,7 +376,7 @@ export default function SignIn() {
 
         {/* Toggle between login/signup */}
         <div style={{ textAlign: "center" }}>
-          <p style={{ 
+          <p style={{
             fontSize: "14px",
             color: colors.navy,
             margin: 0
