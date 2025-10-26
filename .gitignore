@@ -2,3 +2,4 @@ backend/api/main
 .devenv/
 backend/api/bin/*
 .devenv.flake.nix
+frontend/node_modules*

@@ -16,7 +16,6 @@ interface Message {
 export default function Homepage() {
   const navigate = useNavigate(); // for navigation
 
-  // ==================== STATE ====================
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +27,6 @@ export default function Homepage() {
   const [isFirstInput, setIsFirstInput] = useState(true); // check if is the first input
   const chatEndRef = useRef<HTMLDivElement>(null); // auto scroll ref
 
-  // ==================== COLORS ====================
   const colors = {
     mint: "#B7D6CC",
     teal: "#4C96A8",
@@ -38,18 +36,17 @@ export default function Homepage() {
     white: "#ffffff",
   };
 
-  // ==================== EFFECTS ====================
   useEffect(() => {
     const user = localStorage.getItem("username");
     setUsername(user || "User");
   }, []);
 
-  //  ==================== AUTO SCROLL TO BOTTOM ====================
+  // AUTO SCROLL TO BOTTOM
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // ==================== HANDLE SEND (USER QUESTION) ====================
+  //HANDLE SEND (USER QUESTION)
   const handleSend = async () => {
     if (input.trim() === "" || isLoading) return;
 
@@ -62,13 +59,15 @@ export default function Homepage() {
     try {
       if (isFirstInput) {
         // the first input: user specifies topic, AI asks first question
-        const aiReply = `
-Great! Let's start with this topic.<br/><br/>
-Here's your first question:<br/><br/>
-$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$
-<br/>
-Solve for x when a=1, b=3, c=2.
-`;
+        const response = await fetch("http://go-api-env.eba-tm4z5dgu.us-east-1.elasticbeanstalk.com/gen", {
+          method: "GET",
+          body: JSON.stringify({Input: input})
+        });
+        if (response.status != 200) {
+          // idk u figure that out carys
+        }
+        const resJson = await response.json();
+        const aiReply = resJson[""] // what the llm is supposed 
         setTimeout(() => {
           setMessages((prev) => [...prev, { role: "ai", content: aiReply }]);
           setIsFirstInput(false); // mark that the first input has been made
