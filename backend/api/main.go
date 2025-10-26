@@ -28,8 +28,8 @@ func main() {
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Hello, World!")
 	})
-	router.HandleFunc("/signup/{username}/{pwd}/{grade}", app.Signup)
-	router.HandleFunc("/login/{username}/{pwd}", app.Login)
+	router.HandleFunc("/signup", app.Signup)
+	router.HandleFunc("/login", app.Login)
 	router.HandleFunc("/addfriend", app.addFriend)
 	router.HandleFunc("/getallfriends/{user}", app.getAllFriends)
 
@@ -39,7 +39,7 @@ func main() {
 		fmt.Fprint(w, "Testing DB")
 		testDB(app, ctx)
 	})
-	protected.HandleFunc("/gen", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/gen", func(w http.ResponseWriter, r *http.Request) {
 		Gen(ctx, w, r)
 	})
 

@@ -6,3 +6,5 @@
 !.elasticbeanstalk/*.global.yml
 
 ivyzhuang.pem
+
+.env
