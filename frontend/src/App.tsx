@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import './App.css'
 import Homepage from './pages/Homepage.tsx'
 import Scoreboard from './pages/Scoreboard.tsx'
-import SignIn from './pages/Signin.tsx'
+import Login from './pages/Login.tsx'
 
 
 
@@ -15,11 +15,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/signin" replace />} />
-        <Route path="/signin" element={<SignIn />} />
+        <Route path="/" element={<Navigate to="/Login" replace />} />
+        <Route path="/Login" element={<Login />} />
         <Route path="/home" element={<Homepage />} />
         <Route path="/scoreboard" element={<Scoreboard />} />
-        <Route path="*" element={<Navigate to="/signin" replace />} />
+        <Route path="*" element={<Navigate to="/Login" replace />} />
 
         {/* this is for connecting Scoreboard with Homepage */}
         <Route path="/" element={<Homepage />} />

@@ -14,6 +14,9 @@ export default function SignIn() {
   
   // ==================== STATE MANAGEMENT ====================
   
+  /** Grade input value */
+  const [grade, setGrade] = useState("");
+
   /** Username input value */
   const [username, setUsername] = useState("");
   
@@ -42,8 +45,8 @@ export default function SignIn() {
   
   /** Centralized color palette matching the main app */
   const colors = {
-    coral: "#DE807B",
-    blush: "#EAB7A9",
+    ltgr: "#a2d3d7ff",     // coral: Accent color for hints
+    ltbu: "#c5d7edff",      // blush: AI message background
     mint: "#B7D6CC",
     teal: "#4C96A8",
     navy: "#2C3E58",
@@ -217,7 +220,7 @@ export default function SignIn() {
             fontSize: "28px",
             fontWeight: "600"
           }}>
-            {isSignUp ? "Sign Up" : "Sign In"}
+            {isSignUp ? "Sign Up" : "Login"}
           </h1>
         </div>
 
@@ -276,6 +279,7 @@ export default function SignIn() {
             onBlur={(e) => e.currentTarget.style.borderColor = colors.mint}
           />
         </div>
+
 
         {/* Password input */}
         <div style={{ marginBottom: isSignUp ? "20px" : "12px" }}>
@@ -346,6 +350,30 @@ export default function SignIn() {
             />
           </div>
         )}
+        {isSignUp && (
+          <div style={{ marginBottom: "12px" }}>
+            <input
+             // type={showPassword ? "text" : "password"}
+              placeholder="Grade"
+              value={grade}
+              onChange={(e) => setGrade(e.target.value)}
+              onKeyDown={handleKeyPress}
+              style={{
+                width: "100%",
+                padding: "12px 16px",
+                borderRadius: "8px",
+                border: `2px solid ${colors.mint}`,
+                boxSizing: "border-box",
+                fontSize: "15px",
+                outline: "none",
+                transition: "border-color 0.3s ease"
+              }}
+              onFocus={(e) => e.currentTarget.style.borderColor = colors.teal}
+              onBlur={(e) => e.currentTarget.style.borderColor = colors.mint}
+            />
+          </div>
+        )}
+
 
         {/* Remember me & Forgot password (only for login) */}
         {!isSignUp && (
