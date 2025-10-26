@@ -62,11 +62,11 @@ export default function Homepage() {
   }, [navigate]);
   
   // ==================== COLOR THEME ====================
-  
+
   /** Centralized color palette for consistent theming */
   const colors = {
-    coral: "#DE807B",      // Accent color for hints
-    blush: "#EAB7A9",      // AI message background
+    ltgr: "#a2d3d7ff",     // Accent color for hints
+    ltbu: "#c5d7edff",      // AI message background
     mint: "#B7D6CC",       // User message background, borders
     teal: "#4C96A8",       // Primary action color
     navy: "#2C3E58",       // Text color, hover states
@@ -303,39 +303,23 @@ export default function Homepage() {
     
     {/* button routes from homepage to scoreboard*/}
   
-  <nav
-    style={{
-      width: "100%",
-      position: "fixed",
-      top: 0,
-      left: 0,
-      backgroundColor: colors.mint,
-      border: "2px solid white",
-      padding: "1rem",
-      display: "flex",
-      justifyContent: "center",
-      zIndex: 1000,
-    }}
->
-  <button
+  <div style={{ display: "flex", justifyContent: "center" }}>
+    <button
     onClick={() => navigate("/Scoreboard")}
    style={{
       backgroundColor: colors.teal,
       border: "2px solid white",
       color: "white",
-
-      padding: "10px 20px",
+      width: "500px",
+      padding: "10px 14px",
       borderRadius: "8px",
-      fontSize: "1rem",
+      fontSize: "1rem", 
       cursor: "pointer",
     }}
   >
     See your score and ranking here!
   </button>
-
-</nav>
-
-
+  </div>
 
     {/* ^^^ button routes from homepage to scoreboard*/}
 
@@ -408,7 +392,7 @@ export default function Homepage() {
                               maxWidth: "900px",
                               padding: "24px 40px",
                               borderRadius: "16px",
-                              backgroundColor: colors.blush,
+                              backgroundColor: colors.ltbu,
                               color: colors.navy,
                               fontSize: "16px",
                               lineHeight: "1.8",
@@ -432,21 +416,21 @@ export default function Homepage() {
                               style={{
                                 padding: "10px 24px",
                                 borderRadius: "8px",
-                                border: `2px solid ${colors.coral}`,
+                                border: `2px solid ${colors.ltgr}`,
                                 backgroundColor: colors.white,
-                                color: colors.coral,
+                                color: colors.ltgr,
                                 cursor: "pointer",
                                 fontSize: "14px",
                                 fontWeight: "600",
                                 transition: "all 0.3s ease"
                               }}
                               onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = colors.coral;
+                                e.currentTarget.style.backgroundColor = colors.ltgr;
                                 e.currentTarget.style.color = colors.white;
                               }}
                               onMouseLeave={(e) => {
                                 e.currentTarget.style.backgroundColor = colors.white;
-                                e.currentTarget.style.color = colors.coral;
+                                e.currentTarget.style.color = colors.ltgr;
                               }}
                             >
                               View Hint
@@ -561,7 +545,7 @@ export default function Homepage() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            backgroundColor: colors.blush
+            backgroundColor: colors.ltbu
           }}>
             {/* Title */}
             <h2 style={{
@@ -580,7 +564,7 @@ export default function Homepage() {
                 padding: "8px 16px",
                 borderRadius: "8px",
                 border: "none",
-                backgroundColor: colors.coral,
+                backgroundColor: colors.ltgr,
                 color: colors.white,
                 cursor: "pointer",
                 fontSize: "14px",
@@ -588,7 +572,7 @@ export default function Homepage() {
                 transition: "background-color 0.3s ease"
               }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.navy}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.coral}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.ltgr}
             >
               Close
             </button>
