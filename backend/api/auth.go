@@ -15,6 +15,10 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+<<<<<<< HEAD
+=======
+	// "github.com/gorilla/mux"
+>>>>>>> bd34474bf43be40c31a09fc6f010417822e48739
 )
 
 type contextKey string
@@ -28,7 +32,11 @@ type signInReq struct {
 }
 
 func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
+<<<<<<< HEAD
 	var req signInReq
+=======
+	var req AccReq
+>>>>>>> bd34474bf43be40c31a09fc6f010417822e48739
 	ctx := r.Context()
 	// vars := mux.Vars(r)
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -54,7 +62,11 @@ func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
 	h := sha256.Sum256([]byte(req.Pwd))
 	hashed := hex.EncodeToString(h[:])
 
+<<<<<<< HEAD
 	res, err := a.DB.ExecContext(ctx, "INSERT INTO users (Username, Score, grade, questionsAnswered) VALUES (?, 100, ?, 0)", req.Username, req.Grade)
+=======
+	res, err := a.DB.ExecContext(ctx, "INSERT INTO users (Username, Score, grade, questionsAnswered) VALUES (?, NULL, ?, 0)", req.Username, req.Grade)
+>>>>>>> bd34474bf43be40c31a09fc6f010417822e48739
 	if err != nil {
 		log.Printf("signup insert user error: %v", err)
 		http.Error(w, "failed to create user", http.StatusInternalServerError)
@@ -104,7 +116,7 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 	h := sha256.Sum256([]byte(req.Pwd))
 	hashed := hex.EncodeToString(h[:])
 	var id int64
-	err := a.DB.QueryRowContext(ctx, "SELECT ID FROM users WHERE Username=? LIMIT 1", req.Username).Scan(&id)
+	err := a.DB.QueryRowContext(ctx, "SELECT ID FROM users WHERE Username=? LIMIT 1", req.Username).Scan(&id)9
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "invalid credentials", http.StatusUnauthorized)

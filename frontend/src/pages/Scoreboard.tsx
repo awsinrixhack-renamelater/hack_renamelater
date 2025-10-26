@@ -47,9 +47,9 @@ export default function UserScores() {
 
 //I LOVE COLORS
   const colors = {
-    ltgr: "#a2d3d7ff",
-    ltbu: "#c5d7edff",
-    mint: "#B7D6CC",
+    ltgr: "#72d3dcff",
+    ltbu: "#83b5f1ff",
+    mint: "#abf2dbff",
     teal: "#4C96A8",
     navy: "#2C3E58",
     white: "#ffffff",
@@ -68,7 +68,7 @@ export default function UserScores() {
         flexDirection: "column", // stacks banners vertically
         alignItems: "center", // centers horizontally
         minHeight: "100vh", // height of viewport (viewport = visible area of webpage!)
-        width: "100vw", // width of viewport
+        width: "100%", // width of viewport
         backgroundColor: colors.white,
         fontFamily: "'Poppins', sans-serif", // clean and yet pretty
         color: colors.navy,
@@ -80,15 +80,16 @@ export default function UserScores() {
         🏆 Scoreboard 🏆
       </h2>
 
-
-
       {/* INPUTS */}
       {/* specifically: username input box and add user button */}
       <div style={{ marginBottom: "1rem" }}>
         {/* GPT came in clutch with template once more */}
         <input
           type="text"
-          placeholder="Enter username"
+          // FOR BACK END PEEPS!!! Need to connect User ID to User's Name 
+          // so that only name is shown on leader board, not ID
+          placeholder="Enter user ID"
+
           value={newUser} // controlled component = value is tied to state = we can reset it after adding user
           onChange={(e) => setNewUser(e.target.value)} // updates state as user types
           onKeyDown={(e) => e.key === 'Enter' && addUser()} // ALLOWS ADD W/ ENTER KEY
@@ -114,7 +115,7 @@ export default function UserScores() {
             fontWeight: "bold",
           }}
         >
-          Add User
+          Add Friend
         </button>
       </div>
 
@@ -172,8 +173,9 @@ export default function UserScores() {
               ? colors.mint //#3 = mint
               : colors.white; // everyone else = white
 
-          const textColor = index <= 2 ? colors.white : colors.navy;
+          //const textColor = index <= 2 ? colors.white : colors.navy;
           // top 3 are gifted white text, everyone else gets navy
+          const textColor = colors.navy;
 
           return (
             //Friend Gpt helped out here, used it's templet to created banners
