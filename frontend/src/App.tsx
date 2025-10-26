@@ -1,24 +1,27 @@
-import { APITester } from "./APITester";
-import "./index.css";
+import { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 
-import logo from "./logo.svg";
-import reactLogo from "./react.svg";
+import './App.css'
+import Homepage from './pages/Homepage.tsx'
+import Scoreboard from './pages/Scoreboard.tsx'
+import SignIn from './pages/Signin.tsx'
 
-export function App() {
+function App() {
+  const [count, setCount] = useState(0)
+
   return (
-    <div className="app">
-      <div className="logo-container">
-        <img src={logo} alt="Bun Logo" className="logo bun-logo" />
-        <img src={reactLogo} alt="React Logo" className="logo react-logo" />
-      </div>
-
-      <h1>Bun + React</h1>
-      <p>
-        Edit <code>src/App.tsx</code> and save to test HMR
-      </p>
-      <APITester />
-    </div>
-  );
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to="/signin" replace />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/home" element={<Homepage />} />
+        <Route path="/scoreboard" element={<Scoreboard />} />
+        <Route path="*" element={<Navigate to="/signin" replace />} />
+      </Routes>
+    </Router>
+  )
 }
 
-export default App;
+export default App
+
+

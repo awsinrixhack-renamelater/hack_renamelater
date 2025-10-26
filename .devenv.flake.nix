@@ -3,11 +3,12 @@
     let
       version = "1.10.0";
 system = "aarch64-darwin";
-devenv_root = "/Users/caryschiu/workspace/hackathons/25-aws-inrix/hack_renamelater";
-devenv_dotfile = "/Users/caryschiu/workspace/hackathons/25-aws-inrix/hack_renamelater/.devenv";
-devenv_dotfile_path = ./.devenv;
-devenv_tmpdir = "/var/folders/q5/w_sjtp8d25q19cb9jzkd0gs40000gn/T/";
-devenv_runtime = "/var/folders/q5/w_sjtp8d25q19cb9jzkd0gs40000gn/T/devenv-71a1f92";
+devenv_root = "/Users/afung/dev/hack_renamelater";
+devenv_dotfile = ./.devenv;
+devenv_dotfile_string = ".devenv";
+container_name = null;
+devenv_tmpdir = "/var/folders/kl/8v0871g538b4bpzt5tyl1yk80000gn/T/";
+devenv_runtime = "/var/folders/kl/8v0871g538b4bpzt5tyl1yk80000gn/T/devenv-767b37b";
 devenv_istesting = false;
 devenv_direnvrc_latest_version = 1;
 container_name = null;
@@ -30,11 +31,12 @@ git_root = "/Users/caryschiu/workspace/hackathons/25-aws-inrix/hack_renamelater"
         let
           version = "1.10.0";
 system = "aarch64-darwin";
-devenv_root = "/Users/caryschiu/workspace/hackathons/25-aws-inrix/hack_renamelater";
-devenv_dotfile = "/Users/caryschiu/workspace/hackathons/25-aws-inrix/hack_renamelater/.devenv";
-devenv_dotfile_path = ./.devenv;
-devenv_tmpdir = "/var/folders/q5/w_sjtp8d25q19cb9jzkd0gs40000gn/T/";
-devenv_runtime = "/var/folders/q5/w_sjtp8d25q19cb9jzkd0gs40000gn/T/devenv-71a1f92";
+devenv_root = "/Users/afung/dev/hack_renamelater";
+devenv_dotfile = ./.devenv;
+devenv_dotfile_string = ".devenv";
+container_name = null;
+devenv_tmpdir = "/var/folders/kl/8v0871g538b4bpzt5tyl1yk80000gn/T/";
+devenv_runtime = "/var/folders/kl/8v0871g538b4bpzt5tyl1yk80000gn/T/devenv-767b37b";
 devenv_istesting = false;
 devenv_direnvrc_latest_version = 1;
 container_name = null;
