@@ -11,16 +11,19 @@ import (
 
 
 func (a *App) Signup(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	vars := mux.Vars(r)
-	id := vars["id"]
+	username := vars["username"]
+	if(len(username) > 20) {
+		http.Error(w, "username too long", 400)
+	}
 	pwd := vars["pwd"]
-
+	
 	h := sha256.New()
 	h.Write([]byte(pwd))
 	hashed := hex.EncodeToString(h.Sum(nil))
 
-	ctx := r.Context()
-	_, err := a.DB.ExecContext(ctx, "INSERT QUERY GOES HERE", id, hashed)
+	_, err := a.DB.ExecContext(ctx, "INSERT INTO auth (userID, hashPW) VALUES (NULL, $1)", hashed)
 	if err != nil {
 		log.Printf("signup exec error: %v", err)
 		http.Error(w, "failed to create user", http.StatusInternalServerError)
