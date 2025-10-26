@@ -28,7 +28,7 @@ func main() {
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Hello, World!");
 	})
-	router.HandleFunc("/signup/{username}/{pwd}", app.Signup)
+	router.HandleFunc("/signup/{username}/{pwd}/{grade}", app.Signup)
 	router.HandleFunc("/login/{username}/{pwd}", app.Login)
 
 	protected := router.PathPrefix("/").Subrouter()
@@ -37,6 +37,12 @@ func main() {
 		fmt.Fprint(w, "Testing DB")
 		testDB(app, ctx)
 	})
+	/*
+	protected.HandleFunc("/gen", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "Testing DB")
+		Gen(ctx);
+	})
+	*/
 
 	log.Println("listening on :5000")
 	log.Fatal(http.ListenAndServe(":5000", router))
