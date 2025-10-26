@@ -33,7 +33,6 @@ func Gen(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// ✅ The prompt is now engineered for clean JSON output
 	prompt := fmt.Sprintf(`
 You are an expert educator creating high-quality assessment questions on: %s
 

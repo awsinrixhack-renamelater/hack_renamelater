@@ -104,7 +104,7 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 	h := sha256.Sum256([]byte(req.Pwd))
 	hashed := hex.EncodeToString(h[:])
 	var id int64
-	err := a.DB.QueryRowContext(ctx, "SELECT ID FROM users WHERE Username=? LIMIT 1", req.Username).Scan(&id)9
+	err := a.DB.QueryRowContext(ctx, "SELECT ID FROM users WHERE Username=? LIMIT 1", req.Username).Scan(&id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "invalid credentials", http.StatusUnauthorized)
